@@ -33,6 +33,8 @@ profiles/<имя>/
   review.md         пункты раздела «Review checks» для команд ревью (EN)
   skills.txt        сторонние навыки профиля
   skills/           свои навыки профиля
+  templates/        файлы для проекта, кладутся, только если их нет
+  requires          профили, от которых зависит этот
 install.sh
 tests/
 ```

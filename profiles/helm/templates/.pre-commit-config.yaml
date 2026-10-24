@@ -1,0 +1,30 @@
+# Хуки pre-commit для Helm-чартов (навык helm-conventions). Установка: pre-commit install.
+# Нужны helm, helm-docs и плагин helm schema (losisin/helm-values-schema-json).
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.30
+    hooks:
+      - id: helmlint
+        files: ^deploy/helm/.*\.(ya?ml|tpl)$
+
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: v1.14.2
+    hooks:
+      - id: helm-docs
+        args: [--chart-search-root=deploy/helm]
+
+  # Один хук на чарт: <chart> — имя каталога чарта.
+  - repo: https://github.com/losisin/helm-values-schema-json
+    rev: v2.4.0
+    hooks:
+      - id: helm-schema
+        args:
+          - --values=deploy/helm/<chart>/values.yaml
+          - --output=deploy/helm/<chart>/values.schema.json
+        files: ^deploy/helm/<chart>/values\.yaml$

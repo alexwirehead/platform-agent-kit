@@ -50,8 +50,11 @@
 
 ## Этап 3. Профили v1
 
-- [ ] T3.1 `helm`: `helm-conventions`, `helm-chart-scaffolding`, шаблон проверки чарта, хуки pre-commit.
+- [x] T3.1 `helm`: `helm-conventions`, `helm-chart-scaffolding`, шаблон проверки чарта, хуки pre-commit.
   Проверить навык на внутренние адреса. Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, навык переведён на английский, внутренних адресов нет (плейсхолдеры). Установщик
+  научен шаблонам профилей. `dev/check-chart.sh` проверен на чарте `helm create`: чистый — `charts OK`,
+  с битым Deployment — exit 1. `tests/run.sh`: passed 11, failed checks 0; shellcheck чистый.
 - [ ] T3.2 `python-exporter`: правила цикла, метрик, логов, тестов на fake-клиентах; `python-code-style`,
   `docker-patterns`. Спека: docs/specs/001-kit-v1.md
 - [ ] T3.3 `external-api`: навык `api-fact-check`. Спека: docs/specs/001-kit-v1.md

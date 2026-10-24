@@ -1,0 +1,3 @@
+- chart: `version` bumped; values keys annotated (`# --`, `# @section --`), secrets `# @ignored`, required ones `@schema required`
+- chart: no plain-text secrets or real addresses in values and `ci/`; secrets only via SOPS (`*.enc.yaml`) or Vault references
+- chart: unprivileged containers have the full securityContext; privileged ones get a deny-all NetworkPolicy

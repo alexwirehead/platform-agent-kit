@@ -186,16 +186,19 @@ if [ "$OFFLINE" -eq 0 ]; then
   done
 fi
 
-# Команды OpenCode и шаблоны; шаблон не перезаписывает файл проекта.
+# Команды OpenCode и шаблоны ядра и профилей; шаблон не перезаписывает файл проекта.
 mkdir -p "$TARGET/.opencode/commands"
 for f in "$KIT"/core/commands/*.md; do
   write_if_changed "$TARGET/.opencode/commands/$(basename "$f")" "$f"
 done
-(cd "$KIT/core/templates" && find . -type f) | while read -r rel; do
-  dst="$TARGET/${rel#./}"
-  [ -e "$dst" ] && continue
-  mkdir -p "$(dirname "$dst")"
-  cp "$KIT/core/templates/${rel#./}" "$dst"
+for src in "${SOURCES[@]}"; do
+  [ -d "$src/templates" ] || continue
+  (cd "$src/templates" && find . -type f) | while read -r rel; do
+    dst="$TARGET/${rel#./}"
+    [ -e "$dst" ] && continue
+    mkdir -p "$(dirname "$dst")"
+    cp -p "$src/templates/${rel#./}" "$dst"
+  done
 done
 
 # .gitignore: блок кита один раз, исключения для своих навыков проекта (не симлинков кита).

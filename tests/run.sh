@@ -21,6 +21,8 @@ for p in a b; do
     > "$KIT/profiles/test-$p/skills/test-$p-skill/SKILL.md"
 done
 echo test-a > "$KIT/profiles/test-b/requires"
+mkdir -p "$KIT/profiles/test-a/templates/dev"
+echo 'template of a' > "$KIT/profiles/test-a/templates/dev/a.txt"
 
 FAILED=0
 PASSED=0
@@ -114,6 +116,7 @@ test_requires_and_order() {
   p="$(new_project)"
   install "$p" test-b
   assert_contains "$p" .agent-kit.lock 'profiles=test-a test-b'
+  assert_contains "$p" dev/a.txt 'template of a'
   assert_contains "$p" AGENTS.md '| situation a | `test-a-skill` |'
   assert_contains "$p" AGENTS.md '- check of b'
   local a b
