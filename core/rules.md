@@ -39,5 +39,19 @@ the skill files: skills are installed as is.
 
 ## Language
 
-Documents, task notes, docstrings, code comments and commit messages are in Russian. Code,
-identifiers, metric names, log and exception messages are in English.
+Documents, task notes, docstrings and code comments are in Russian. Code, identifiers, metric
+names, log and exception messages are in English.
+
+## Commit messages
+
+Conventional Commits 1.0.0: `<type>(<scope>): <description>`, then an optional body and footers,
+each after a blank line.
+
+- Type in English: `feat` (new feature), `fix` (bug fix); other changes `build`, `chore`, `ci`,
+  `docs`, `style`, `refactor`, `perf`, `test`.
+- Scope: the area of code (module, chart, profile), a noun; omit it when the change spans the repo.
+- Description and body in Russian, description short, without a trailing period.
+- Footers: `Задача: T2.2` for the task; a breaking change — `!` before the colon and a
+  `BREAKING CHANGE: <what breaks>` footer.
+
+Example: `feat(chart): ServiceMonitor включается из values`.

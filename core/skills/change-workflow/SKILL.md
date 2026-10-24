@@ -51,7 +51,8 @@ the current state (listed in the spec's «Затронутые документ�
 - Code, charts, dashboards, deploy: merge only after the user has checked the branch on the real
   environment and confirmed it. Docs, specs, rules, dev tooling: after verification and an explicit
   "merge" from the user.
-- Merge: `git switch main && git merge --no-ff <branch>`; the merge message is in Russian and
-  references the spec. Delete the branch after merge (`git branch -d`).
+- Merge: `git switch main && git merge --no-ff <branch>`; the merge message follows the commit
+  message rules (Conventional Commits), its body references the spec: `Спека: docs/specs/NNN-slug.md`.
+  Delete the branch after merge (`git branch -d`).
 - Never merge without confirmation. A branch waiting for a check is recorded as `Ветка: <name>` in the
   task notes.
