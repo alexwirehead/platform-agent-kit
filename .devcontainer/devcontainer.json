@@ -1,0 +1,44 @@
+{
+  "name": "platform-agent-kit",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    // Node.js — для npx: CLI skills (установщик кита) и ctx7 (документация библиотек).
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+  "remoteUser": "vscode",
+  // Состояние, которое должно пережить удаление контейнера и томов Docker,
+  // лежит на маке в ~/.devcontainer-state/platform-agent-kit/: сессии и
+  // настройки Claude, навыки ~/.agents, история шелла. initializeCommand
+  // выполняется на маке до старта: bind-монтирование требует готовых папок.
+  // chmod 700: в claude/ лежит .credentials.json.
+  "initializeCommand": "mkdir -p \"$HOME/.devcontainer-state/platform-agent-kit/claude\" \"$HOME/.devcontainer-state/platform-agent-kit/agents\" \"$HOME/.devcontainer-state/platform-agent-kit/shell-history\" && chmod 700 \"$HOME/.devcontainer-state\" \"$HOME/.devcontainer-state/platform-agent-kit/claude\"",
+  "mounts": [
+    "source=${localEnv:HOME}/.devcontainer-state/platform-agent-kit/claude,target=/home/vscode/.claude,type=bind",
+    "source=${localEnv:HOME}/.devcontainer-state/platform-agent-kit/agents,target=/home/vscode/.agents,type=bind",
+    "source=${localEnv:HOME}/.devcontainer-state/platform-agent-kit/shell-history,target=/home/vscode/.shell-history,type=bind",
+    // VS Code Server и расширения: кеш, после Rebuild не качаются заново.
+    "source=platform-agent-kit-vscode-server,target=/home/vscode/.vscode-server,type=volume"
+  ],
+  "containerEnv": {
+    // .claude.json тоже ляжет в ~/.claude и сохранится вместе с сессиями.
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+  },
+  // safe.directory: на bind-монтировании с мака git иногда видит чужого
+  // владельца и отказывает с «dubious ownership». Настройка — в git контейнера.
+  "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && { [ ! -f pyproject.toml ] || uv sync; }",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "timonwong.shellcheck"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python"
+      }
+    }
+  }
+}
