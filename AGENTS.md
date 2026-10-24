@@ -3,41 +3,114 @@
 Набор правил и навыков агентов для проектов платформенного инженера. Что это и как устроено —
 `README.md` и `docs/00-overview.md`.
 
-## С чего начать сессию
+## Project
 
-1. Прочитать этот файл и `TASKS.md`.
-2. Взять первую задачу `[~]`, если нет — первую `[ ]` по порядку.
-3. Прочитать её спецификацию (строка «Спека:») и только нужные исходники.
-4. Сделать задачу, проверить по «Готово, когда» спецификации, обновить `TASKS.md`.
+Кит работает по своему ядру (К12): блок ниже ставит `./install.sh .`, профили в кит не ставятся.
 
-## Правила
+- Decision log: `docs/00-overview.md`, раздел 4 (К1–К12).
+- Full verification command: `uv run pytest && uv run ruff check && uv run ruff format --check` —
+  тесты установщика, shellcheck (К10) и ruff.
+
+### Правила кита
 
 1. **Простое лучше сложного.** Установщик на bash, правила в markdown, без своего CLI и лишних
    зависимостей. Тесты — pytest через uv (К10).
 2. **Только проверенные правила.** Правило попадает в кит, если обкатано в проекте или согласовано
    с пользователем по интервью. Заготовка профиля без интервью остаётся пустой (К4).
-3. **Язык (К5).** Тексты для агента (`SKILL.md`, `rules.md`, команды) — на английском, в `description`
-   навыка русские ключевые слова. README, спецификации, `TASKS.md` — на русском.
-4. **Коммиты (К9)** — Conventional Commits: `feat(install): описание по-русски`, футер `Задача: T2.2`.
+3. **Язык (К5), отступление от ядра.** Тексты для агента (`SKILL.md`, `rules.md`, `skills.md`,
+   `review.md`, `project.md`, команды) — на английском, в `description` навыка русские ключевые слова.
+   README, спецификации, `TASKS.md`, этот раздел — на русском.
+4. **Коммиты (К9)** — по правилам блока ниже; scope — `core`, `install` или имя профиля.
 5. **Сторонний код не хранится (К3).** Навык — строка `URL@коммит` в `skills.txt`. Коммит поднимается
    только после чтения diff навыка.
 6. **Без привязки к проекту.** В ките нет внутренних адресов, реальных ID, названий заказчиков
    и исходных проектов. Специфика проекта остаётся в проекте.
-7. **Сначала спецификация, потом задача, потом код** — как в навыке `change-workflow`: спецификация
-   `docs/specs/NNN-slug.md` по шаблону из `docs/specs/README.md`, решение в `docs/00-overview.md`,
-   раздел 4, задача в `TASKS.md`.
-8. **Уточняющие вопросы — без напоминания:** варианты с плюсами и минусами, рекомендуемый первым.
-9. Решения К1–К11 не пересматриваются молча.
+7. **Изменил `core/` — перезапусти `./install.sh .`**: иначе блок ниже устареет и тест
+   `test_kit_agents_block_up_to_date` упадёт.
 
-## Ветки и мерж
+### Ветки и мерж
 
 В `main` не коммитят; ветка `feature/NNN-slug` по спецификации, иначе `fix/<slug>` или `docs/<slug>`.
-Коммит после каждой задачи. Мерж `git merge --no-ff` только после `uv run pytest` и явного «мержи»
-от пользователя.
+Коммит после каждой задачи. Мерж — PR на GitHub через merge-коммит (как `--no-ff`), только после
+полной проверки и явного «мержи» от пользователя.
 
-## Проверка
+<!-- platform-agent-kit:begin -->
+<!-- Managed by platform-agent-kit install.sh; edits inside this block are overwritten. -->
 
-```bash
-uv run pytest                       # тесты установщика и shellcheck (К10)
-uv run ruff check && uv run ruff format --check
-```
+## Starting a session
+
+1. Read this file and `TASKS.md`.
+2. Take the first task marked `[~]`; if none, the first `[ ]` in order.
+3. Read only the documents the task links to and its spec (the `Спека:` line).
+4. Do the task, check it against the spec's «Готово, когда», update `TASKS.md`.
+
+## Rules that must not be broken
+
+1. **Simple beats complex.** Minimal dependencies, flat structure, sequential code. Add complexity only
+   for a problem that is actually visible. After every task with code, run `simplify`.
+2. **No invented facts.** A library API comes from its official docs (`source-driven-development`),
+   never from memory. A fact about an external system comes from the project's facts document; if it
+   is not there, verify it at the primary source and record it with the source. Not found — add an
+   open question, never a guess in code.
+3. **Tests run without the dev container.** `git clone` plus the project's toolchain is enough. Code
+   receives its environment as parameters, tests create files in a temporary directory, no absolute
+   paths to a developer machine.
+4. **Secrets.** Keys and tokens are never logged or committed; the repository contains no real IDs.
+   Do not read mounted credential files.
+5. **Decisions are not revisited silently.** Decisions live in the project's decision log. If one
+   gets in the way, stop and ask the user.
+6. **Ask clarifying questions unprompted.** If the input is ambiguous, changes a rule or a decision,
+   or has several reasonable options, ask before editing a spec or code (Claude Code:
+   `AskUserQuestion`, OpenCode: `question`). Give options with honest pros and cons, the recommended
+   one first.
+7. **Spec first, then task, then code.** Any behaviour change follows `change-workflow`. Without a
+   spec you may only fix code to match already described behaviour, refactor without behaviour
+   change, fix typos and docs.
+
+## Skills
+
+Load a skill only when its situation from the table below occurs, not in advance. Do not load the
+same skill twice in a session. Library and tool docs come through the `ctx7` CLI:
+`npx ctx7@latest library <name> "<query>"`, then `npx ctx7@latest docs <id> "<query>"`.
+
+Deviations of the project from a skill are written in the project section of this file, never in
+the skill files: skills are installed as is.
+
+## Language
+
+Documents, task notes, docstrings and code comments are in Russian. Code, identifiers, metric
+names, log and exception messages are in English.
+
+## Commit messages
+
+Conventional Commits 1.0.0: `<type>(<scope>): <description>`, then an optional body and footers,
+each after a blank line.
+
+- Type in English: `feat` (new feature), `fix` (bug fix); other changes `build`, `chore`, `ci`,
+  `docs`, `style`, `refactor`, `perf`, `test`.
+- Scope: the area of code (module, chart, profile), a noun; omit it when the change spans the repo.
+- Description and body in Russian, description short, without a trailing period.
+- Footers: `Задача: T2.2` for the task; a breaking change — `!` before the colon and a
+  `BREAKING CHANGE: <what breaks>` footer.
+
+Example: `feat(chart): ServiceMonitor включается из values`.
+
+## Skills table
+
+| Situation | Skill |
+|---|---|
+| any change of behaviour: feature, metric, config option, panel, deploy | `change-workflow` |
+| writing code against a library API | `source-driven-development` |
+| any task with code: a failing test first | `test-driven-development` |
+| a red test or strange behaviour | `systematic-debugging` |
+| before marking a task `[x]` and before a commit | `verification-before-completion` |
+| after a task with code | `simplify` (Claude Code: built in; OpenCode: `/simplify`) |
+| end of a stage | `code-review`; for secrets, images, manifests also `security-review` (OpenCode: `/code-review`, `/security-review`) |
+| writing Russian text: document, README, commit | `ru-text`, then `no-ai-slop` |
+
+## Review checks
+
+Project-specific items for `code-review` and `security-review`.
+
+- none
+<!-- platform-agent-kit:end -->

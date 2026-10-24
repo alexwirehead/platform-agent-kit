@@ -14,7 +14,9 @@ BEGIN = "<!-- platform-agent-kit:begin -->"
 def kit(tmp_path_factory):
     """Копия кита без .git и с тестовыми профилями: test-a и test-b, который требует test-a."""
     kit = tmp_path_factory.mktemp("kit") / "kit"
-    shutil.copytree(ROOT, kit, ignore=shutil.ignore_patterns(".git", ".venv", "*_cache", "__pycache__"))
+    shutil.copytree(
+        ROOT, kit, ignore=shutil.ignore_patterns(".git", ".venv", "*_cache", "__pycache__", ".agents", ".claude")
+    )
     for p in ("a", "b"):
         prof = kit / "profiles" / f"test-{p}"
         (prof / "skills" / f"test-{p}-skill").mkdir(parents=True)
@@ -186,6 +188,14 @@ def test_gitignore_without_newline(kit, project):
 def test_every_real_profile(kit, project, profile):
     install(kit, project, profile)
     assert profile in read(project, ".agent-kit.lock")
+
+
+def test_kit_agents_block_up_to_date(kit, project):
+    """Блок AGENTS.md кита совпадает с тем, что собрал бы установщик (К12)."""
+    text = (ROOT / "AGENTS.md").read_text()
+    (project / "AGENTS.md").write_text(text)
+    install(kit, project)
+    assert read(project, "AGENTS.md") == text, "блок устарел: запусти ./install.sh . в корне кита"
 
 
 def test_shellcheck():

@@ -1,5 +1,11 @@
 .DS_Store
 .venv/
 __pycache__/
+# lock кита в самом ките: коммит меняется с каждым коммитом (К12)
+.agent-kit.lock
 .pytest_cache/
 .ruff_cache/
+# platform-agent-kit: installed skills; project skills are kept by !.claude/skills/<name>/ lines
+.agents/
+.claude/skills/*
+skills-lock.json
