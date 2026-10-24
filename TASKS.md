@@ -59,8 +59,10 @@
   Заметки: 2026-10-24, навык переведён на английский, внутренних адресов нет (плейсхолдеры). Установщик
   научен шаблонам профилей. `dev/check-chart.sh` проверен на чарте `helm create`: чистый — `charts OK`,
   с битым Deployment — exit 1. `tests/run.sh`: passed 11, failed checks 0; shellcheck чистый.
-- [ ] T3.2 `python-exporter`: правила цикла, метрик, логов, тестов на fake-клиентах; `python-code-style`,
+- [x] T3.2 `python-exporter`: правила цикла, метрик, логов, тестов на fake-клиентах; `python-code-style`,
   `docker-patterns`. Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, правила вынесены в свой навык `python-exporter`, а не в `rules.md`: он грузится
+  только при работе над экспортером (экономия контекста, как К5). Без привязки к Yandex Cloud.
 - [ ] T3.3 `external-api`: навык `api-fact-check`. Спека: docs/specs/001-kit-v1.md
 - [ ] T3.4 `yandex-cloud`: навык `yc-fact-check` поверх `api-fact-check`. Спека: docs/specs/001-kit-v1.md
 - [ ] T3.5 `grafana`: навык `grafana-dashboard`. Спека: docs/specs/001-kit-v1.md
