@@ -1,1 +1,1 @@
-| creating or changing a dashboard JSON, panels, variables or queries | `grafana-dashboard` |
+| creating or changing any Grafana dashboard JSON: panels, variables, queries | `grafana-dashboard` |

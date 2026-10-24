@@ -35,6 +35,7 @@ profiles/<имя>/
   skills/           свои навыки профиля
   templates/        файлы для проекта, кладутся, только если их нет
   requires          профили, от которых зависит этот
+  project.md        строки заготовки раздела проекта в новом AGENTS.md (EN)
 install.sh
 tests/              pytest: тесты установщика (К10)
 pyproject.toml      dev-зависимости: pytest, ruff, shellcheck-py
