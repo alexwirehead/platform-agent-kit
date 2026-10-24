@@ -1,0 +1,3 @@
+- dashboard: datasource is `${datasource}`; no real IDs or hosts; selector variables have no default selection (hidden repeat variables keep All)
+- dashboard: categories coloured by value mappings, magnitudes by thresholds; No data looks different from zero and Unknown
+- dashboard: counters use `rate()`/`increase()` with `$__rate_interval`; every panel has a unit

@@ -1,0 +1,2 @@
+- Yandex Cloud: the SDK is created without `RetryPolicy` unless a decision says otherwise; every call has `timeout=`
+- Yandex Cloud: roles in docs and deploy are read-only; no primitive `viewer` or `editor`

@@ -1,0 +1,1 @@
+- Facts document: `docs/api-facts.md` — the only source of API facts; change the path if the project keeps them elsewhere.

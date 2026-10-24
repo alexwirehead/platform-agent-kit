@@ -1,0 +1,2 @@
+# Third-party skills: one GitHub tree URL pinned to a commit per line. Bump a commit only after reading the skill diff (decision К3).
+https://github.com/wshobson/agents/tree/0874a27b17a22e2b7c2e2bcd725768e0803cad06/plugins/kubernetes-operations/skills/helm-chart-scaffolding

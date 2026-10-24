@@ -1,0 +1,3 @@
+- exporter: a failed pair keeps its resources as unknown from the previous snapshot; `collect_success` is 0 only for that pair
+- exporter: no unbounded label values; vanished resources disappear from `/metrics`
+- exporter: keys and tokens never reach logs, `repr` or exception chains (`raise ... from None`)
