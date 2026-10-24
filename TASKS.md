@@ -14,8 +14,10 @@
 - [x] T1.1 `core/rules.md` (EN) — общие правила без привязки к проекту.
   Заметки: 2026-10-24, правила и `core/skills.md`; проверка — вычитка, исполняемых проверок до установщика нет.
   Спека: docs/specs/001-kit-v1.md
-- [ ] T1.2 Навык `change-workflow` и шаблоны `core/templates/` (`docs/specs/README.md`, `TASKS.md`).
+- [x] T1.2 Навык `change-workflow` и шаблоны `core/templates/` (`docs/specs/README.md`, `TASKS.md`).
   Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, проверка — вычитка; навык и шаблоны ссылаются на журнал решений проекта, его
+  место задаёт раздел проекта в `AGENTS.md` (T2.2).
 - [ ] T1.3 Команды OpenCode `simplify`, `code-review`, `security-review` без привязки к Yandex Cloud.
   Спека: docs/specs/001-kit-v1.md
 - [ ] T1.4 `core/skills.txt`: сторонние навыки ядра с закреплёнными коммитами.
@@ -26,6 +28,7 @@
 - [ ] T2.1 `tests/run.sh`: установка `--offline` во временный каталог, проверки из «Готово, когда».
   Спека: docs/specs/001-kit-v1.md
 - [ ] T2.2 `install.sh`: профили и зависимости, блок `AGENTS.md`, навыки, команды, шаблоны, lock.
+  Новый `AGENTS.md` получает раздел проекта с заготовкой: журнал решений, команда полной проверки.
   Спека: docs/specs/001-kit-v1.md
 - [ ] T2.3 Повторный запуск и смена профилей: без изменений, лишние навыки удаляются, `.gitignore`.
   Спека: docs/specs/001-kit-v1.md
