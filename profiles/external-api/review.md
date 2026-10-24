@@ -1,0 +1,2 @@
+- API: every endpoint, field, enum value and error code used in code is in the facts document with a source
+- API: fixtures have no real IDs and omit default-valued fields as the protocol does
