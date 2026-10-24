@@ -134,6 +134,37 @@ test_dropped_profile_removed() {
   assert_count "$p" AGENTS.md 'Profile b' 0
   assert_file "$p" .agents/skills/test-a-skill/SKILL.md
   [ -d "$p/.claude/skills/own-skill" ] || fail "project skill removed"
+  assert_contains "$p" .gitignore '!.claude/skills/own-skill/'
+  assert_count "$p" .gitignore '!.claude/skills/test-a-skill/' 0
+}
+
+test_broken_markers_fail() {
+  local p
+  p="$(new_project)"
+  printf '# X\n\n<!-- platform-agent-kit:begin -->\nold\n\n## My section\nkeep me\n' > "$p/AGENTS.md"
+  if "$KIT/install.sh" --offline "$p" > /dev/null 2>&1; then
+    fail "AGENTS.md without end marker accepted"
+  fi
+  assert_contains "$p" AGENTS.md 'keep me'
+}
+
+test_crlf_agents() {
+  local p
+  p="$(new_project)"
+  install "$p"
+  awk '{ printf "%s\r\n", $0 }' "$p/AGENTS.md" > "$p/tmp"
+  mv "$p/tmp" "$p/AGENTS.md"
+  install "$p" test-a
+  assert_contains "$p" AGENTS.md 'Profile a'
+  assert_count "$p" AGENTS.md '<!-- platform-agent-kit:begin -->' 1
+}
+
+test_gitignore_without_newline() {
+  local p
+  p="$(new_project)"
+  printf 'node_modules' > "$p/.gitignore"
+  install "$p"
+  grep -qx 'node_modules' "$p/.gitignore" || fail ".gitignore: node_modules line broken"
 }
 
 test_unknown_profile_fails() {
@@ -159,7 +190,6 @@ test_every_real_profile() {
   for d in "$KIT"/profiles/*/; do
     name="$(basename "$d")"
     case "$name" in test-*) continue ;; esac
-    [ -f "$d/rules.md" ] || continue
     p="$(new_project)"
     install "$p" "$name" || fail "profile $name failed"
     assert_contains "$p" .agent-kit.lock "$name"

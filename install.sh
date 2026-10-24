@@ -44,7 +44,7 @@ PROFILES=()
 add_profile() {
   local name="$1" depth="$2" req
   [ "$depth" -le 10 ] || die "requires cycle at profile $name"
-  [ -f "$KIT/profiles/$name/rules.md" ] || die "unknown profile: $name"
+  [ -n "$name" ] && [ -d "$KIT/profiles/$name" ] || die "unknown profile: $name"
   for req in $(lines "$KIT/profiles/$name/requires"); do
     add_profile "$req" $((depth + 1))
   done
@@ -53,6 +53,27 @@ add_profile() {
 for name in "$@"; do
   add_profile "$name" 0
 done
+
+# count_line <файл> <строка> — сколько строк файла равны строке (CRLF не мешает).
+count_line() {
+  awk -v m="$2" '{ sub(/\r$/, "") } $0 == m { n++ } END { print n + 0 }' "$1"
+}
+
+# Маркеры блока в AGENTS.md: оба нет — блок допишется, оба по одному и по порядку — заменится.
+AGENTS="$TARGET/AGENTS.md"
+MODE=new
+if [ -f "$AGENTS" ]; then
+  MODE=append
+  b="$(count_line "$AGENTS" "$BEGIN")"
+  e="$(count_line "$AGENTS" "$END")"
+  if [ "$b" = 1 ] && [ "$e" = 1 ]; then
+    MODE=replace
+    awk -v begin="$BEGIN" -v end="$END" '{ sub(/\r$/, "") } $0 == end && !seen { exit 1 } $0 == begin { seen = 1 }' \
+      "$AGENTS" || die "$AGENTS: end marker before begin marker"
+  elif [ "$b" != 0 ] || [ "$e" != 0 ]; then
+    die "$AGENTS: need exactly one '$BEGIN' and one '$END' line, found $b and $e"
+  fi
+fi
 
 # Каталоги-источники: ядро, затем профили.
 SOURCES=("$KIT/core")
@@ -84,6 +105,7 @@ trap 'rm -rf "$TMP"' EXIT
   echo "$BEGIN"
   echo "<!-- Managed by platform-agent-kit install.sh; edits inside this block are overwritten. -->"
   for src in "${SOURCES[@]}"; do
+    [ -f "$src/rules.md" ] || continue
     echo
     cat "$src/rules.md"
   done
@@ -110,8 +132,7 @@ write_if_changed() {
   cmp -s "$2" "$1" 2> /dev/null || cp "$2" "$1"
 }
 
-AGENTS="$TARGET/AGENTS.md"
-if [ ! -f "$AGENTS" ]; then
+if [ "$MODE" = new ]; then
   {
     echo "# $(basename "$TARGET")"
     echo
@@ -122,10 +143,11 @@ if [ ! -f "$AGENTS" ]; then
     echo
     cat "$TMP/block"
   } > "$AGENTS"
-elif grep -qF "$BEGIN" "$AGENTS"; then
+elif [ "$MODE" = replace ]; then
   awk -v block="$TMP/block" -v begin="$BEGIN" -v end="$END" '
-    $0 == begin { while ((getline line < block) > 0) print line; skip = 1; next }
-    $0 == end { skip = 0; next }
+    { l = $0; sub(/\r$/, "", l) }
+    l == begin { while ((getline line < block) > 0) print line; skip = 1; next }
+    l == end { skip = 0; next }
     !skip { print }
   ' "$AGENTS" > "$TMP/agents"
   write_if_changed "$AGENTS" "$TMP/agents"
@@ -176,15 +198,26 @@ done
   cp "$KIT/core/templates/${rel#./}" "$dst"
 done
 
+# .gitignore: блок кита один раз, исключения для своих навыков проекта (не симлинков кита).
 GITIGNORE="$TARGET/.gitignore"
+if [ -s "$GITIGNORE" ] && [ -n "$(tail -c 1 "$GITIGNORE")" ]; then
+  echo >> "$GITIGNORE"
+fi
 if ! grep -qF "# platform-agent-kit" "$GITIGNORE" 2> /dev/null; then
   {
-    echo "# platform-agent-kit: installed skills. Keep project skills with !.claude/skills/<name>/"
+    echo "# platform-agent-kit: installed skills; project skills are kept by !.claude/skills/<name>/ lines"
     echo ".agents/"
     echo ".claude/skills/*"
     echo "skills-lock.json"
   } >> "$GITIGNORE"
 fi
+for d in "$TARGET"/.claude/skills/*/; do
+  d="${d%/}"
+  name="$(basename "$d")"
+  [ -d "$d" ] && [ ! -L "$d" ] || continue
+  contains "$name" ${SKILLS[@]+"${SKILLS[@]}"} && continue
+  grep -qxF "!.claude/skills/$name/" "$GITIGNORE" || echo "!.claude/skills/$name/" >> "$GITIGNORE"
+done
 
 COMMIT="$(git -C "$KIT" rev-parse HEAD 2> /dev/null || echo unknown)"
 if [ "$COMMIT" != unknown ] && [ -n "$(git -C "$KIT" status --porcelain)" ]; then
