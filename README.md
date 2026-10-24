@@ -36,16 +36,18 @@
 
 Нужны `bash` (подходит 3.2 из macOS), `git` и `npx` (Node.js) — через него ставятся сторонние навыки.
 
-1. Склонировать кит (решения К8 и К11):
+1. Склонировать кит в любой каталог, например рядом с проектами (решения К8 и К11):
 
    ```bash
-   git clone git@github.com:alexwirehead/platform-agent-kit.git ~/.agents/platform-agent-kit
+   git clone git@github.com:alexwirehead/platform-agent-kit.git ~/projects/platform-agent-kit
    ```
+
+   Путь ничем не закреплён: установщик находит свой каталог сам. Ниже в примерах — `~/projects`.
 
 2. Поставить в проект ядро и нужные профили:
 
    ```bash
-   ~/.agents/platform-agent-kit/install.sh <каталог-проекта> helm python-exporter
+   ~/projects/platform-agent-kit/install.sh <каталог-проекта> helm python-exporter
    ```
 
    Список профилей с описаниями — `install.sh --help`.
@@ -69,8 +71,8 @@
 ## Обновление и смена профилей
 
 ```bash
-git -C ~/.agents/platform-agent-kit pull
-~/.agents/platform-agent-kit/install.sh <каталог-проекта> <профили>
+git -C ~/projects/platform-agent-kit pull
+~/projects/platform-agent-kit/install.sh <каталог-проекта> <профили>
 ```
 
 Повторный запуск с тем же списком ничего не меняет. Блок в `AGENTS.md` заменяется целиком, текст вне
