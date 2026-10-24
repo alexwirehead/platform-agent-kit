@@ -11,7 +11,8 @@
 
 ## Этап 1. Ядро
 
-- [ ] T1.1 `core/rules.md` (EN) — общие правила без привязки к проекту.
+- [x] T1.1 `core/rules.md` (EN) — общие правила без привязки к проекту.
+  Заметки: 2026-10-24, правила и `core/skills.md`; проверка — вычитка, исполняемых проверок до установщика нет.
   Спека: docs/specs/001-kit-v1.md
 - [ ] T1.2 Навык `change-workflow` и шаблоны `core/templates/` (`docs/specs/README.md`, `TASKS.md`).
   Спека: docs/specs/001-kit-v1.md

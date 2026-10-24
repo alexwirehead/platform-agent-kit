@@ -21,13 +21,15 @@
 ```
 core/
   rules.md          фрагмент AGENTS.md: общие правила (EN)
+  skills.md         строки таблицы «ситуация → навык» (EN)
   skills.txt        сторонние навыки: URL с коммитом, по одному в строке
   skills/           свои навыки ядра, например change-workflow
   commands/         команды OpenCode: simplify, code-review, security-review
   templates/        docs/specs/README.md, TASKS.md — кладутся, только если их нет
 profiles/<имя>/
   README.md         для людей: что даёт профиль (RU)
-  rules.md          фрагмент AGENTS.md и строки таблицы «ситуация → навык» (EN)
+  rules.md          фрагмент AGENTS.md (EN)
+  skills.md         строки таблицы «ситуация → навык» (EN)
   skills.txt        сторонние навыки профиля
   skills/           свои навыки профиля
 install.sh
