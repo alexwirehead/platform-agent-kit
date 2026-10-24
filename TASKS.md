@@ -69,7 +69,9 @@
 - [x] T3.4 `yandex-cloud`: навык `yc-fact-check` поверх `api-fact-check`. Спека: docs/specs/001-kit-v1.md
   Заметки: 2026-10-24, плюс `facts.md` — общие проверенные факты с источниками и датами, без методов
   конкретных сервисов. `install.sh yandex-cloud` ставит `external-api yandex-cloud`. `uv run pytest`: 15 passed.
-- [ ] T3.5 `grafana`: навык `grafana-dashboard`. Спека: docs/specs/001-kit-v1.md
+- [x] T3.5 `grafana`: навык `grafana-dashboard`. Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, формат v2, цвета, «Unknown» и «No data», строка «Сбор данных», PromQL, ловушки
+  таблиц с версией 13.2.4, проверка на стенде. `uv run pytest`: 16 passed.
 
 ## Этап 4. Заготовки профилей
 

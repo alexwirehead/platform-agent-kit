@@ -1,0 +1,2 @@
+- dashboard: state colours via value mappings, Unknown and No data look different, a data-collection row exists
+- dashboard: datasource is `${datasource}`, no real IDs or hosts and no default selection in the JSON
