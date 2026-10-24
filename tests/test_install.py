@@ -25,6 +25,7 @@ def kit(tmp_path_factory):
             f"---\nname: test-{p}-skill\ndescription: test\n---\n"
         )
     (kit / "profiles" / "test-b" / "requires").write_text("test-a\n")
+    (kit / "profiles" / "test-a" / "README.md").write_text("# Profile test-a\n\nFirst line\nof a.\n\nMore.\n")
     (kit / "profiles" / "test-a" / "templates" / "dev").mkdir(parents=True)
     (kit / "profiles" / "test-a" / "templates" / "dev" / "a.txt").write_text("template of a\n")
     return kit
@@ -133,8 +134,24 @@ def test_dropped_profile_removed(kit, project):
 
 
 def test_unknown_profile_fails(kit, project):
-    assert run(kit, project, "no-such-profile").returncode != 0
+    result = run(kit, project, "no-such-profile")
+    assert result.returncode != 0
+    assert "unknown profile: no-such-profile" in result.stderr
+    assert "test-a" in result.stderr
     assert not (project / "AGENTS.md").exists()
+
+
+def test_help_lists_profiles(kit):
+    result = subprocess.run([str(kit / "install.sh"), "--help"], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    lines = result.stdout.splitlines()
+    assert any(line.split() == ["test-a", "First", "line", "of", "a."] for line in lines)
+    assert any(line.split() == ["test-b", "(requires:", "test-a)"] for line in lines)
+    for profile in (d.name for d in (ROOT / "profiles").iterdir() if d.is_dir()):
+        assert any(line.split()[:1] == [profile] for line in lines), profile
+    no_args = subprocess.run([str(kit / "install.sh")], capture_output=True, text=True)
+    assert no_args.returncode != 0
+    assert "profiles:" in no_args.stderr
 
 
 def test_templates_not_overwritten(kit, project):

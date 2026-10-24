@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Ставит правила и навыки кита в проект (спецификация docs/specs/001-kit-v1.md).
-# Запуск: install.sh [--offline] <каталог-проекта> [профиль...]
+# Запуск: install.sh [--offline] <каталог-проекта> [профиль...]; install.sh --help — профили.
 # --offline — не скачивать сторонние навыки (для тестов). Совместим с bash 3.2 (macOS).
 set -euo pipefail
 
@@ -30,12 +30,45 @@ lines() {
   grep -v -e '^#' -e '^[[:space:]]*$' "$1" || true
 }
 
+# Справка: профили из profiles/, описание — первый абзац README.md профиля, зависимости — requires.
+usage() {
+  local d name desc req
+  echo "usage: install.sh [--offline] <project-dir> [profile...]"
+  echo
+  echo "Installs the kit core and the given profiles into <project-dir>; rerun to update."
+  echo "  --offline   skip third-party skills (used by tests)"
+  echo "  -h, --help  show this help"
+  echo
+  echo "profiles:"
+  for d in "$KIT"/profiles/*/; do
+    [ -d "$d" ] || continue
+    name="$(basename "$d")"
+    desc=""
+    [ -f "$d/README.md" ] && desc="$(awk '
+      NR == 1 && /^#/ { next }
+      /^[[:space:]]*$/ { if (s) exit; next }
+      { printf "%s%s", (s ? " " : ""), $0; s = 1 }
+    ' "$d/README.md")"
+    req="$(lines "$d/requires" | tr '\n' ' ')"
+    printf '  %-16s %s\n' "$name" "$desc${req:+ (requires: ${req% })}"
+  done
+}
+
+case "${1:-}" in
+  -h | --help)
+    usage
+    exit 0
+    ;;
+esac
 OFFLINE=0
 if [ "${1:-}" = "--offline" ]; then
   OFFLINE=1
   shift
 fi
-[ $# -ge 1 ] || die "usage: install.sh [--offline] <project-dir> [profile...]"
+if [ $# -lt 1 ]; then
+  usage >&2
+  exit 1
+fi
 TARGET="$(cd "$1" 2> /dev/null && pwd)" || die "no such directory: $1"
 shift
 
@@ -44,7 +77,12 @@ PROFILES=()
 add_profile() {
   local name="$1" depth="$2" req
   [ "$depth" -le 10 ] || die "requires cycle at profile $name"
-  [ -n "$name" ] && [ -d "$KIT/profiles/$name" ] || die "unknown profile: $name"
+  if [ -z "$name" ] || [ ! -d "$KIT/profiles/$name" ]; then
+    echo "install.sh: unknown profile: $name" >&2
+    echo >&2
+    usage >&2
+    exit 1
+  fi
   for req in $(lines "$KIT/profiles/$name/requires"); do
     add_profile "$req" $((depth + 1))
   done

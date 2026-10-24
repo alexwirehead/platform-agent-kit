@@ -21,6 +21,8 @@
 ~/.agents/platform-agent-kit/install.sh <каталог-проекта> helm python-exporter
 ```
 
+Список профилей с описаниями — `install.sh --help`.
+
 Установщик собирает управляемый блок в `AGENTS.md` проекта, кладёт навыки в `.agents/skills/`
 (для Claude Code — симлинки в `.claude/skills/`), команды в `.opencode/commands/`, записывает
 версию кита в `.agent-kit.lock`. Правила проекта пишутся в `AGENTS.md` вне блока, повторный

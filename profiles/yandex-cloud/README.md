@@ -1,6 +1,8 @@
 # Профиль yandex-cloud
 
-Работа с API Yandex Cloud. Требует `external-api` (ставится сам).
+Работа с API Yandex Cloud.
+
+Требует `external-api` (ставится сам, файл `requires`).
 
 - Навык `yc-fact-check`: источники Yandex Cloud — proto `cloudapi`, реестр эндпоинтов, страницы
   `api-ref` и `security`, код `python-sdk`; сборка фикстуры по факту.
