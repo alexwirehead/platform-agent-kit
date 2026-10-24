@@ -36,9 +36,13 @@ profiles/<имя>/
   templates/        файлы для проекта, кладутся, только если их нет
   requires          профили, от которых зависит этот
   project.md        строки заготовки раздела проекта в новом AGENTS.md (EN)
-install.sh
+install.sh          установщик; install.sh --help — список профилей
 tests/              pytest: тесты установщика (К10)
 pyproject.toml      dev-зависимости: pytest, ruff, shellcheck-py
+docs/               обзор и решения (этот файл), спецификации docs/specs/
+.devcontainer/      окружение для разработки кита
+AGENTS.md           порядок работы над китом; CLAUDE.md импортирует его
+TASKS.md            план и статусы задач
 ```
 
 В проекте после установки:
