@@ -63,8 +63,12 @@
   `docker-patterns`. Спека: docs/specs/001-kit-v1.md
   Заметки: 2026-10-24, правила вынесены в свой навык `python-exporter`, а не в `rules.md`: он грузится
   только при работе над экспортером (экономия контекста, как К5). Без привязки к Yandex Cloud.
-- [ ] T3.3 `external-api`: навык `api-fact-check`. Спека: docs/specs/001-kit-v1.md
-- [ ] T3.4 `yandex-cloud`: навык `yc-fact-check` поверх `api-fact-check`. Спека: docs/specs/001-kit-v1.md
+- [x] T3.3 `external-api`: навык `api-fact-check`. Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, навык, правило «агент не ходит в реальную систему», шаблон `docs/api-facts.md`.
+  `uv run pytest`: 15 passed.
+- [x] T3.4 `yandex-cloud`: навык `yc-fact-check` поверх `api-fact-check`. Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, плюс `facts.md` — общие проверенные факты с источниками и датами, без методов
+  конкретных сервисов. `install.sh yandex-cloud` ставит `external-api yandex-cloud`. `uv run pytest`: 15 passed.
 - [ ] T3.5 `grafana`: навык `grafana-dashboard`. Спека: docs/specs/001-kit-v1.md
 
 ## Этап 4. Заготовки профилей
