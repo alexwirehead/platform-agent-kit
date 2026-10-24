@@ -91,6 +91,9 @@ git -C ~/.agents/platform-agent-kit pull
 - Порядок работы для агента и человека — `AGENTS.md`: спецификация `docs/specs/NNN-slug.md`, решение
   в `docs/00-overview.md`, задача в `TASKS.md`, ветка `feature/NNN-slug`, мерж после проверки.
 - Окружение — девконтейнер, см. `.devcontainer/README.md`.
+- Кит работает по своему ядру (решение К12). После клона и после каждого изменения `core/` —
+  `./install.sh .` в корне кита: он ставит навыки ядра и обновляет блок в `AGENTS.md`. Устаревший
+  блок ловит тест `test_kit_agents_block_up_to_date`.
 - Проверка перед коммитом:
 
   ```bash
