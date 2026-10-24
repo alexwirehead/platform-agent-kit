@@ -175,3 +175,43 @@ def test_shellcheck():
     scripts = [ROOT / "install.sh", *sorted((ROOT / "profiles").glob("*/templates/**/*.sh"))]
     result = subprocess.run(["shellcheck", *map(str, scripts)], capture_output=True, text=True)
     assert result.returncode == 0, result.stdout
+
+
+def test_deleted_template_not_recreated(kit, project):
+    install(kit, project)
+    (project / "TASKS.md").unlink()
+    install(kit, project)
+    assert not (project / "TASKS.md").exists()
+    assert "templates=" in read(project, ".agent-kit.lock")
+
+
+def test_profile_project_lines(kit, project):
+    install(kit, project, "external-api")
+    assert "Facts document:" in read(project, "AGENTS.md")
+
+
+def test_project_skill_wins_over_kit_skill(kit, project):
+    own = project / ".claude" / "skills" / "test-a-skill"
+    own.mkdir(parents=True)
+    (own / "SKILL.md").write_text("project version\n")
+    result = run(kit, project, "test-a")
+    assert result.returncode == 0, result.stderr
+    assert "project version" in (own / "SKILL.md").read_text()
+    assert not (project / ".agents" / "skills" / "test-a-skill").exists()
+    assert "!.claude/skills/test-a-skill/" in read(project, ".gitignore").splitlines()
+
+
+@pytest.mark.skipif(not (shutil.which("helm") and shutil.which("kubeconform")), reason="no helm or kubeconform")
+def test_check_chart_skips_crds(kit, project):
+    install(kit, project, "helm")
+    chart = project / "deploy" / "helm" / "app"
+    chart.parent.mkdir(parents=True)
+    subprocess.run(["helm", "create", str(chart)], check=True, capture_output=True)
+    (chart / "ci").mkdir()
+    (chart / "ci" / "default-values.yaml").write_text("{}\n")
+    (chart / "templates" / "servicemonitor.yaml").write_text(
+        "apiVersion: monitoring.coreos.com/v1\nkind: ServiceMonitor\nmetadata:\n  name: app\n"
+        "spec:\n  selector: {}\n  endpoints: [{port: http}]\n"
+    )
+    result = subprocess.run([str(project / "dev" / "check-chart.sh")], capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr

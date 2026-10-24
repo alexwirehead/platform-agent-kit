@@ -1,6 +1,15 @@
 # Хуки pre-commit для Helm-чартов (навык helm-conventions). Установка: pre-commit install.
 # Нужны helm, helm-docs и плагин helm schema (losisin/helm-values-schema-json).
 repos:
+  # Падает, пока в этом файле остался плейсхолдер имени чарта: подставьте имя и удалите этот хук.
+  - repo: local
+    hooks:
+      - id: chart-placeholder
+        name: chart name placeholder replaced
+        language: pygrep
+        entry: '<char[t]>'
+        files: ^\.pre-commit-config\.yaml$
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

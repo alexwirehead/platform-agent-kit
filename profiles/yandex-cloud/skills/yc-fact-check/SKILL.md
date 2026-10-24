@@ -6,8 +6,8 @@ description: Verify a fact about the Yandex Cloud API (REST path, host, field, e
 # Checking a fact about the Yandex Cloud API
 
 The procedure and recording rules are those of `api-fact-check`; this skill adds the Yandex Cloud
-sources. General facts already verified are in `facts.md` next to this file — read it first and
-re-check a fact at its source if the project depends on it and the date is old.
+sources. General facts already verified are in `facts.md` next to this file — read it first, copy a
+fact you use into the project facts document with its source, re-check it at the source if the date is old.
 
 ## Sources, most reliable first
 
@@ -36,7 +36,8 @@ re-check a fact at its source if the project depends on it and the date is old.
 
 ## Recording
 
-Source tags: `[proto] <path>@<commit>`, `[doc] <page> (<date>)`, `[sdk] <file>@<version>`, `[reg] (<date>)`.
+Source tags as in `api-fact-check`: `[spec]` — cloudapi proto `<path>@<commit>`, `[doc]` — page and date,
+`[code]` — python-sdk `<file>@<version>`, `[reg]` — endpoint registry and date.
 
 ## Fixture from a fact
 

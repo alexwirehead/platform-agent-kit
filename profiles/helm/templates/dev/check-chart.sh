@@ -35,8 +35,8 @@ for chart in deploy/helm/*/; do
 done
 
 echo "== kubeconform"
-# CRD без схемы в стандартном каталоге kubeconform пропускаются: -skip ServiceMonitor,...
-kubeconform -strict -summary -cache "$SCHEMAS" "$OUT"/*.yaml
+# CRD без схемы в стандартном каталоге kubeconform пропускаются; свой список — SKIP_KINDS.
+kubeconform -strict -summary -cache "$SCHEMAS" -skip "${SKIP_KINDS:-ServiceMonitor,PodMonitor,PrometheusRule}" "$OUT"/*.yaml
 
 echo "== required values"
 # Обязательные values: без них рендер падает с понятной ошибкой, а не Pod на старте. Пример:

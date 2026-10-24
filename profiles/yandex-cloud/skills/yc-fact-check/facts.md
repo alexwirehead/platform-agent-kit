@@ -3,9 +3,9 @@
 Each fact has its source and the date it was checked. Service-specific methods are not here: check
 them with the procedure in `SKILL.md`.
 
-Sources: **[proto]** `github.com/yandex-cloud/cloudapi@cb932fccd2dd64cebd5e45dfcdd613444447e7d5`
+Sources: **[spec]** `github.com/yandex-cloud/cloudapi@cb932fccd2dd64cebd5e45dfcdd613444447e7d5`
 (2026-10-19); **[doc]** `https://yandex.cloud/ru/docs/...`; **[reg]** `GET https://api.cloud.yandex.net/endpoints`;
-**[sdk]** `github.com/yandex-cloud/python-sdk` 0.411.0, commit `93781c7` (2026-10-19).
+**[code]** `github.com/yandex-cloud/python-sdk` 0.411.0, commit `93781c7` (2026-10-19).
 
 ## Hosts
 
@@ -16,7 +16,7 @@ Sources: **[proto]** `github.com/yandex-cloud/cloudapi@cb932fccd2dd64cebd5e45dfc
   `mdb.api.cloud.yandex.net:443`, `managed-kubernetes` → `mks.api.cloud.yandex.net:443`
   (there is no `k8s.api.cloud.yandex.net`), `dataproc` → `dataproc.api.cloud.yandex.net:443`,
   `ydb` → `ydb.api.cloud.yandex.net:443`.
-- The registry itself is `api.cloud.yandex.net:443`; the SDK uses it for discovery [sdk] `_auth_fabric.py`,
+- The registry itself is `api.cloud.yandex.net:443`; the SDK uses it for discovery [code] `_auth_fabric.py`,
   `_channels.py`.
 
 ## REST and proto3 JSON
@@ -50,7 +50,7 @@ Sources: **[proto]** `github.com/yandex-cloud/cloudapi@cb932fccd2dd64cebd5e45dfc
 Observation (production, 2026-10-20): a REST 403 came with `"code": 403` in the body, not 7. For manual
 `curl` checks look at the HTTP status.
 
-## Python SDK `yandexcloud` [sdk]
+## Python SDK `yandexcloud` [code]
 
 - Clients: `sdk = yandexcloud.SDK(service_account_key=<dict>)`, then `sdk.client(<Stub>)`; the service
   is resolved from the stub's module (`_sdk.py`, `_supported_modules`). Request and response classes are

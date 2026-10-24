@@ -5,7 +5,8 @@ description: Verify a fact about an external system's API (endpoint, host, field
 
 # Checking a fact about an external API
 
-The agent has no access to the real system. A fact is verified only if found in a source below.
+The agent does not call the real system's API with credentials; public vendor material without
+authentication (docs, spec repositories, a public registry) may be downloaded. A fact is verified only if found in a source below.
 Guesses, model memory and "usually it works like this" are not sources.
 
 ## Sources, most reliable first

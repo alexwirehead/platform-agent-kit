@@ -92,6 +92,17 @@ for src in "${SOURCES[@]}"; do
     THIRD+=("$url")
   done
 done
+# Свой навык проекта с тем же именем побеждает: копия кита не ставится.
+KEEP=()
+for d in ${OWN[@]+"${OWN[@]}"}; do
+  link="$TARGET/.claude/skills/$(basename "$d")"
+  if [ -d "$link" ] && [ ! -L "$link" ]; then
+    echo "install.sh: project skill $(basename "$d") overrides the kit skill" >&2
+  else
+    KEEP+=("$d")
+  fi
+done
+OWN=(${KEEP[@]+"${KEEP[@]}"})
 SKILLS=()
 for d in ${OWN[@]+"${OWN[@]}"} ${THIRD[@]+"${THIRD[@]}"}; do
   SKILLS+=("$(basename "$d")")
@@ -140,6 +151,9 @@ if [ "$MODE" = new ]; then
     echo
     echo "- Decision log: \`<path>\` — where project decisions are recorded."
     echo "- Full verification command: \`<command>\` — run before every commit."
+    for src in "${SOURCES[@]}"; do
+      lines "$src/project.md"
+    done
     echo
     cat "$TMP/block"
   } > "$AGENTS"
@@ -172,12 +186,7 @@ for d in ${OWN[@]+"${OWN[@]}"}; do
   name="$(basename "$d")"
   rm -rf "${TARGET:?}/.agents/skills/$name"
   cp -R "$d" "$TARGET/.agents/skills/$name"
-  link="$TARGET/.claude/skills/$name"
-  if [ -e "$link" ] && [ ! -L "$link" ]; then
-    echo "install.sh: $link is a project directory, symlink skipped" >&2
-  else
-    ln -sfn "../../.agents/skills/$name" "$link"
-  fi
+  ln -sfn "../../.agents/skills/$name" "$TARGET/.claude/skills/$name"
 done
 if [ "$OFFLINE" -eq 0 ]; then
   for url in ${THIRD[@]+"${THIRD[@]}"}; do
@@ -191,14 +200,22 @@ mkdir -p "$TARGET/.opencode/commands"
 for f in "$KIT"/core/commands/*.md; do
   write_if_changed "$TARGET/.opencode/commands/$(basename "$f")" "$f"
 done
+# Шаблон ставится один раз: lock помнит пути, и удалённый проектом шаблон не возвращается.
+OLD_TEMPLATES=""
+[ -f "$LOCK" ] && OLD_TEMPLATES="$(sed -n 's/^templates=//p' "$LOCK")"
+TEMPLATES=()
 for src in "${SOURCES[@]}"; do
   [ -d "$src/templates" ] || continue
-  (cd "$src/templates" && find . -type f) | while read -r rel; do
-    dst="$TARGET/${rel#./}"
+  while read -r rel; do
+    rel="${rel#./}"
+    TEMPLATES+=("$rel")
+    # shellcheck disable=SC2086 # OLD_TEMPLATES — пути через пробел
+    contains "$rel" $OLD_TEMPLATES && continue
+    dst="$TARGET/$rel"
     [ -e "$dst" ] && continue
     mkdir -p "$(dirname "$dst")"
-    cp -p "$src/templates/${rel#./}" "$dst"
-  done
+    cp -p "$src/templates/$rel" "$dst"
+  done < <(cd "$src/templates" && find . -type f | LC_ALL=C sort)
 done
 
 # .gitignore: блок кита один раз, исключения для своих навыков проекта (не симлинков кита).
@@ -231,6 +248,7 @@ fi
   echo "commit=$COMMIT"
   echo "profiles=${PROFILES[*]+"${PROFILES[*]}"}"
   echo "skills=${SKILLS[*]+"${SKILLS[*]}"}"
+  echo "templates=${TEMPLATES[*]+"${TEMPLATES[*]}"}"
 } > "$TMP/lock"
 write_if_changed "$LOCK" "$TMP/lock"
 
