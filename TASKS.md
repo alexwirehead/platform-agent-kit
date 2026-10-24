@@ -18,8 +18,10 @@
   Спека: docs/specs/001-kit-v1.md
   Заметки: 2026-10-24, проверка — вычитка; навык и шаблоны ссылаются на журнал решений проекта, его
   место задаёт раздел проекта в `AGENTS.md` (T2.2).
-- [ ] T1.3 Команды OpenCode `simplify`, `code-review`, `security-review` без привязки к Yandex Cloud.
+- [x] T1.3 Команды OpenCode `simplify`, `code-review`, `security-review` без привязки к Yandex Cloud.
   Спека: docs/specs/001-kit-v1.md
+  Заметки: 2026-10-24, формат сверен с https://opencode.ai/v2/docs/commands (ctx7); пункты профилей —
+  `review.md`, раздел «Review checks» в `AGENTS.md`.
 - [ ] T1.4 `core/skills.txt`: сторонние навыки ядра с закреплёнными коммитами.
   Спека: docs/specs/001-kit-v1.md
 

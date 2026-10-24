@@ -30,6 +30,7 @@ profiles/<имя>/
   README.md         для людей: что даёт профиль (RU)
   rules.md          фрагмент AGENTS.md (EN)
   skills.md         строки таблицы «ситуация → навык» (EN)
+  review.md         пункты раздела «Review checks» для команд ревью (EN)
   skills.txt        сторонние навыки профиля
   skills/           свои навыки профиля
 install.sh
