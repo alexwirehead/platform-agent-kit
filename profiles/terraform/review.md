@@ -1,0 +1,5 @@
+- terraform: no secret values in code, `*.tfvars`, `inputs` or outputs without `sensitive = true`
+- terraform: every replacement or destroy is justified; a rename has a `moved` block, a move between units has `removed` and `import`
+- terraform: modules declare only lower version bounds and no `provider` or `backend` blocks
+- terraform: `source` points to the internal GitLab with a tag in `ref`, never a branch, public GitHub or registry
+- terraform: a module release bumps the semver tag by the interface change and has a `CHANGELOG.md` section

@@ -1,7 +1,7 @@
 # 003. Профиль terraform: Terraform и Terragrunt для Yandex Cloud и Cloud.ru Advanced
 
 Статус: принята 2026-11-03
-Задачи: T4.6 [ ], T4.7 [ ], T4.8 [ ]
+Задачи: T4.6 [x], T4.7 [ ], T4.8 [ ]
 Решения: К13
 
 ## Зачем
@@ -18,7 +18,7 @@ Advanced. Обкатанного репозитория нет: правила �
 
 - **Рантайм** — Terraform CLI и Terragrunt 1.x. Не OpenTofu.
 - **Репозитории.** Монорепозитория нет:
-  - у каждого модуля свой репозиторий: модуль в корне (`versions.tf`, `variables.tf`, `outputs.tf`,
+  - у каждого модуля свой репозиторий: модуль в корне (`terraform.tf` — имя по `terraform-style-guide`, `variables.tf`, `outputs.tf`,
     `main.tf`, README от terraform-docs); релиз — semver-тег модуля, изменения описываются
     в `CHANGELOG.md`;
   - у каждого облака свой live-репозиторий Terragrunt — описание реальной инфраструктуры облака:

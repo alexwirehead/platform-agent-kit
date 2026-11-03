@@ -1,0 +1,2 @@
+- Terraform and Terragrunt versions: `<terraform>` / `<terragrunt>`; module source `git::https://<gitlab>/<group>/<module>.git`.
+- Secrets delivery for Terraform: `<SOPS|Vault>` — how a secret reaches `inputs` without being committed.
