@@ -104,3 +104,40 @@ advance, the old one stays valid, IAM may return the same token while it is fres
   hosts and Kubernetes clusters with node groups and nodes in that folder.
 - Grant a role to a service account on a cloud [doc] `iam/operations/sa/assign-role-for-sa`:
   `yc resource-manager cloud add-access-binding <cloud> --role <role> --service-account-id <sa-id>`.
+
+## Terraform
+
+Checked 2026-11-03. [doc] `terraform/quickstart`, `tutorials/infrastructure-management/terraform-state-storage`,
+`storage/s3/api-ref/object/upload`; [mirror] `GET https://terraform-mirror.yandexcloud.net/registry.terraform.io/<ns>/<name>/index.json`.
+
+- Provider `source = "yandex-cloud/yandex"` [doc] `terraform/quickstart`.
+- Provider mirror (registry.terraform.io is not reachable from Russia), `~/.terraformrc` [doc]
+  `terraform/quickstart`; the page warns the mirror may be unavailable:
+
+  ```hcl
+  provider_installation {
+    network_mirror {
+      url     = "https://terraform-mirror.yandexcloud.net/"
+      include = ["registry.terraform.io/*/*"]
+    }
+    direct {
+      exclude = ["registry.terraform.io/*/*"]
+    }
+  }
+  ```
+
+- The mirror also serves `sbercloud-terraform/sbercloud` (Cloud.ru Advanced) [mirror].
+- Lock file against the mirror [doc] `terraform-state-storage`:
+  `terraform providers lock -net-mirror=https://terraform-mirror.yandexcloud.net -platform=linux_amd64 -platform=darwin_arm64 yandex-cloud/yandex`.
+- Provider credentials: `cloud_id`, `folder_id` and `token` are read from `YC_CLOUD_ID`, `YC_FOLDER_ID`,
+  `YC_TOKEN` when not set in the `provider` block; service account impersonation is the recommended and
+  most secure way [doc] `terraform/quickstart`.
+- Backend `s3` for Object Storage [doc] `terraform-state-storage`:
+  `endpoints = { s3 = "https://storage.yandexcloud.net" }`, `region = "ru-central1"`,
+  `skip_region_validation = true`, `skip_credentials_validation = true`, `skip_requesting_account_id = true`
+  (Terraform 1.6.1+), `skip_s3_checksum = true` (Terraform 1.6.3+). The static access key is passed at
+  `init` (`-backend-config="access_key=..."`) or as `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, never
+  written into the config. The page's `remote_state` example with keys in `config` is not followed.
+- State locking: the page points to a YDB table (DynamoDB API); Terraform deprecates `dynamodb_table`.
+  Object Storage supports `If-None-Match: *` on PutObject [doc] `storage/s3/api-ref/object/upload`, and
+  `use_lockfile = true` works — confirmed in production by the user (2026-11-03).

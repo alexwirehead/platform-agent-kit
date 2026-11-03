@@ -1,0 +1,1 @@
+- Cloud.ru: no `access_key`, `secret_key` or `security_token` in `provider "sbercloud"` or `backend "s3"` blocks

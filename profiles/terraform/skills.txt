@@ -1,0 +1,4 @@
+# Third-party skills: one GitHub tree URL pinned to a commit per line. Bump a commit only after reading the skill diff (decision К3).
+https://github.com/LukasNiessen/terrashark/tree/21f2c18b912818b6a8e2b7bdbf25a275ecb894b1
+https://github.com/hashicorp/agent-skills/tree/bc6b14b77481c3cbfbb06a0166be7245ed45798c/plugins/terraform/skills/terraform-style-guide
+https://github.com/hashicorp/agent-skills/tree/bc6b14b77481c3cbfbb06a0166be7245ed45798c/plugins/terraform/skills/refactor-module

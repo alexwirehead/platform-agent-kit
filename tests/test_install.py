@@ -184,6 +184,20 @@ def test_gitignore_without_newline(kit, project):
     assert "node_modules" in read(project, ".gitignore").splitlines()
 
 
+def test_third_party_skill_names(kit, project):
+    """Имя стороннего навыка — последний элемент пути, для навыка в корне репозитория — имя репозитория."""
+    prof = kit / "profiles" / "test-third"
+    prof.mkdir(exist_ok=True)
+    sha = "0" * 40
+    (prof / "skills.txt").write_text(
+        f"https://github.com/owner/repo/tree/{sha}/skills/sub-skill\nhttps://github.com/owner/root-skill/tree/{sha}\n"
+    )
+    install(kit, project, "test-third")
+    skills = [line for line in read(project, ".agent-kit.lock").splitlines() if line.startswith("skills=")][0]
+    assert {"sub-skill", "root-skill"} <= set(skills.removeprefix("skills=").split())
+    assert sha not in skills
+
+
 @pytest.mark.parametrize("profile", sorted(p.name for p in (ROOT / "profiles").iterdir() if p.is_dir()))
 def test_every_real_profile(kit, project, profile):
     install(kit, project, profile)
@@ -242,3 +256,46 @@ def test_check_chart_skips_crds(kit, project):
     )
     result = subprocess.run([str(project / "dev" / "check-chart.sh")], capture_output=True, text=True)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+TERRAFORM_TOOLS = ("terraform", "terragrunt", "tflint", "trivy", "terraform-docs")
+
+
+def check_terraform(project):
+    return subprocess.run([str(project / "dev" / "check-terraform.sh")], capture_output=True, text=True)
+
+
+@pytest.mark.skipif(not all(map(shutil.which, TERRAFORM_TOOLS)), reason="no terraform tools")
+def test_check_terraform_module(kit, project):
+    install(kit, project, "terraform")
+    (project / "terraform.tf").write_text('terraform {\n  required_version = ">= 1.10"\n}\n')
+    (project / "variables.tf").write_text(
+        'variable "name" {\n  description = "Name of the resource"\n  type        = string\n}\n'
+    )
+    (project / "main.tf").write_text('resource "terraform_data" "main" {\n  input = var.name\n}\n')
+    (project / "outputs.tf").write_text(
+        'output "name" {\n  description = "Name of the resource"\n  value       = terraform_data.main.output\n}\n'
+    )
+    subprocess.run(
+        ["terraform-docs", "markdown", "table", "--output-file", "README.md", "."],
+        cwd=project,
+        check=True,
+        capture_output=True,
+    )
+    result = check_terraform(project)
+    assert result.returncode == 0, result.stdout + result.stderr
+    (project / "main.tf").write_text('resource "terraform_data" "main" {\ninput = var.name\n}\n')
+    assert check_terraform(project).returncode != 0
+
+
+@pytest.mark.skipif(not all(map(shutil.which, TERRAFORM_TOOLS)), reason="no terraform tools")
+def test_check_terraform_live(kit, project):
+    install(kit, project, "terraform")
+    (project / "root.hcl").write_text('locals {\n  cloud = "test"\n}\n')
+    unit = project / "folder" / "vpc"
+    unit.mkdir(parents=True)
+    (unit / "terragrunt.hcl").write_text('include "root" {\n  path = find_in_parent_folders("root.hcl")\n}\n')
+    result = check_terraform(project)
+    assert result.returncode == 0, result.stdout + result.stderr
+    (unit / "terragrunt.hcl").write_text('include "root" {\npath = find_in_parent_folders("root.hcl")\n}\n')
+    assert check_terraform(project).returncode != 0

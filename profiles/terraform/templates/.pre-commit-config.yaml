@@ -1,0 +1,24 @@
+# Хуки pre-commit для Terraform и Terragrunt (навык terraform-conventions). Установка: pre-commit install.
+# Нужны terraform, tflint, trivy, terraform-docs, для live-репозитория — terragrunt.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      # Только в репозитории модуля: README пересобирается из variables и outputs.
+      - id: terraform-docs
+        name: terraform-docs README
+        language: system
+        entry: terraform-docs markdown table --output-file README.md .
+        files: \.tf$
+        pass_filenames: false
+      - id: check-terraform
+        name: dev/check-terraform.sh
+        language: system
+        entry: dev/check-terraform.sh
+        files: \.(tf|hcl)$
+        pass_filenames: false

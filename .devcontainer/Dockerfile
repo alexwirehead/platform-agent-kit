@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 # Образ для разработки platform-agent-kit: bash-установщик, тесты на pytest через uv
-# (решение К10), helm и kubeconform для теста шаблона dev/check-chart.sh.
+# (решение К10), helm и kubeconform для теста шаблона dev/check-chart.sh, terraform, terragrunt,
+# tflint, trivy и terraform-docs для теста шаблона dev/check-terraform.sh.
 # Версии закреплены, загрузки сверяются с sha256 из файлов контрольных сумм
 # релизов: при обрыве сети или подмене файла сборка падает. Python скачивает uv
 # и сам сверяет его хеш. Обновление — правка ARG вместе с хешами для arm64 и
@@ -22,11 +23,29 @@ ARG HELM_SHA256_AMD64=86584a54def73570558f66f5111cc53dfed56689637ae32c1201205d49
 ARG KUBECONFORM_VERSION=0.8.0
 ARG KUBECONFORM_SHA256_ARM64=1f53fc8e81258197a35e8603054162a5af1de8c5af13746c71ab680d9534ed87
 ARG KUBECONFORM_SHA256_AMD64=9bc2bffbf71f261128533edaf912153948b7ff238f9a531ae6d34466ec287883
+# terraform, terragrunt, tflint, trivy, terraform-docs — тест шаблона dev/check-terraform.sh профиля
+# terraform, облако не нужно. Версии старше двух недель на момент выбора, sha256 из файлов
+# контрольных сумм релизов.
+ARG TERRAFORM_VERSION=1.16.6
+ARG TERRAFORM_SHA256_ARM64=a750b5a11038f165846b2658c40c88cd7070aa67a61bab431a14ba27928ea9ea
+ARG TERRAFORM_SHA256_AMD64=38034b38d03096399a7a1264a14561a8029b2b496fd1f169452656e53968f1b7
+ARG TERRAGRUNT_VERSION=1.1.6
+ARG TERRAGRUNT_SHA256_ARM64=44b43df99bae7a309fdb831180bd9efb84fb145cf38a80c139e490395581649d
+ARG TERRAGRUNT_SHA256_AMD64=d75a80bb264758ba00dabcb17f4b507fcdab4ca90d9e41f96750df036bf69b04
+ARG TFLINT_VERSION=0.64.0
+ARG TFLINT_SHA256_ARM64=560da89aacf59389d4eb029730dd5b109b7288096c32f2726a0d9e783a5ea8eb
+ARG TFLINT_SHA256_AMD64=cca9d13e2e1d7a2c627af60ff899a3c9b74212899416aeb96ec764d2ef954537
+ARG TRIVY_VERSION=0.76.0
+ARG TRIVY_SHA256_ARM64=aab21e677a7b7071fc79f1711480840754c18a1b9d9cefa7ccd06af63a0e8f4c
+ARG TRIVY_SHA256_AMD64=e24b1c51293c1b15e4ba8d45bbc7891ba053f90278ec2698f3562c993e145fe7
+ARG TERRAFORM_DOCS_VERSION=0.24.0
+ARG TERRAFORM_DOCS_SHA256_ARM64=d12bd7b73c1fc9c64efc79f8157dd713dabd559f1ecf3cfc0f42e32279a155fd
+ARG TERRAFORM_DOCS_SHA256_AMD64=9005daf969de0b50134493a2c00078b49f5f5b39d021cda7c89bf4d4f3d776d3
 # Задаёт BuildKit: arm64 на Apple Silicon, amd64 на Intel.
 ARG TARGETARCH
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates curl jq git \
+    && apt-get install -y --no-install-recommends ca-certificates curl jq git unzip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
@@ -60,6 +79,36 @@ RUN set -eux; \
     tar xzf kubeconform.tgz -C /usr/local/bin kubeconform; \
     cd /; rm -rf "$t"; \
     helm version --short; kubeconform -v
+
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+      arm64) tf_sha="${TERRAFORM_SHA256_ARM64}"; tg_sha="${TERRAGRUNT_SHA256_ARM64}"; \
+             tl_sha="${TFLINT_SHA256_ARM64}"; tv_sha="${TRIVY_SHA256_ARM64}"; tv_arch=ARM64; \
+             td_sha="${TERRAFORM_DOCS_SHA256_ARM64}" ;; \
+      amd64) tf_sha="${TERRAFORM_SHA256_AMD64}"; tg_sha="${TERRAGRUNT_SHA256_AMD64}"; \
+             tl_sha="${TFLINT_SHA256_AMD64}"; tv_sha="${TRIVY_SHA256_AMD64}"; tv_arch=64bit; \
+             td_sha="${TERRAFORM_DOCS_SHA256_AMD64}" ;; \
+      *) echo "unsupported arch ${TARGETARCH}"; exit 1 ;; \
+    esac; \
+    t="$(mktemp -d)"; cd "$t"; \
+    get() { curl -fsSL --retry 5 --retry-all-errors -o "$2" "$1"; echo "$3  $2" | sha256sum -c -; }; \
+    get "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip" \
+      terraform.zip "${tf_sha}"; \
+    unzip -q terraform.zip terraform -d /usr/local/bin; \
+    get "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_${TARGETARCH}" \
+      terragrunt "${tg_sha}"; \
+    install -m 0755 terragrunt /usr/local/bin/terragrunt; \
+    get "https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${TARGETARCH}.zip" \
+      tflint.zip "${tl_sha}"; \
+    unzip -q tflint.zip tflint -d /usr/local/bin; \
+    get "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-${tv_arch}.tar.gz" \
+      trivy.tgz "${tv_sha}"; \
+    tar xzf trivy.tgz -C /usr/local/bin trivy; \
+    get "https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-${TARGETARCH}.tar.gz" \
+      terraform-docs.tgz "${td_sha}"; \
+    tar xzf terraform-docs.tgz -C /usr/local/bin terraform-docs; \
+    cd /; rm -rf "$t"; \
+    terraform version; terragrunt --version; tflint --version; trivy --version; terraform-docs --version
 
 # Python ставится в общий каталог, а не в домашний root: так его видит
 # пользователь vscode. Владелец vscode, чтобы uv в контейнере мог доставить

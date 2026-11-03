@@ -1,7 +1,8 @@
 # Девконтейнер platform-agent-kit
 
 Окружение для разработки кита: Claude Code, uv с закреплённым Python 3.13 для тестов установщика
-(`uv run pytest`, решение К10), helm и kubeconform для теста шаблона `dev/check-chart.sh`, Node.js для
+(`uv run pytest`, решение К10), helm и kubeconform для теста шаблона `dev/check-chart.sh`, terraform, terragrunt, tflint, trivy и
+terraform-docs для теста шаблона `dev/check-terraform.sh`, Node.js для
 `npx` (CLI `skills`, ctx7). Образ на `mcr.microsoft.com/devcontainers/base:3-ubuntu26.04` для arm64
 (Apple Silicon) и amd64.
 
@@ -12,10 +13,11 @@
 | uv, uvx, Python 3.13 | тесты (`pytest`), ruff, shellcheck (`shellcheck-py`) из `pyproject.toml` |
 | git, jq, curl | установщик и проверки руками |
 | helm, kubeconform | тест `test_check_chart_skips_crds`; без них тест пропускается |
+| terraform, terragrunt, tflint, trivy, terraform-docs | тесты `test_check_terraform_*`; без них тесты пропускаются |
 | Claude Code, Node.js | features, версии закреплены в `devcontainer-lock.json` |
 | Расширения VS Code | Python, Ruff, ShellCheck |
 
-Версии uv, Python, helm и kubeconform — в `ARG` в начале `Dockerfile`, архивы сверяются с sha256 из
+Версии uv, Python, helm, kubeconform и утилит Terraform — в `ARG` в начале `Dockerfile`, архивы сверяются с sha256 из
 релизов. Базовый образ закреплён по digest.
 
 bash 3.2 (macOS) в контейнере нет: совместимость установщика с ним проверяется прогоном
