@@ -30,6 +30,7 @@
 | `yandex-cloud` | API Yandex Cloud; требует `external-api` | `yc-fact-check` |
 | `grafana` | любой дашборд Grafana JSON-ом в репозитории | `grafana-dashboard` |
 | `terraform` | модули Terraform и live-репозитории Terragrunt, офлайн-проверки `dev/check-terraform.sh`; облако — профиль `yandex-cloud` или `cloudru` | `terraform-conventions`; сторонние `terrashark`, `terraform-style-guide`, `refactor-module` |
+| `cloudru` | Cloud.ru Advanced: провайдер `sbercloud`, OBS; требует `external-api` | `cloudru-fact-check` |
 
 Что даёт каждый профиль — `profiles/<имя>/README.md`. Заготовки на будущее, пока без правил: `cicd`,
 `fluxcd`, `argocd`, `otel`, `monitoring` — правила появятся после интервью (решение К4).

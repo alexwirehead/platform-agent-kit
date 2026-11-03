@@ -114,10 +114,15 @@
   блок `RUN` прогнан под `sh` для arm64, образ не собирался (Docker нет). Установка с сетью:
   13 навыков, смена профилей убирает terrashark. `uv run pytest`: 26 passed (тесты Terraform выполнялись
   с утилитами в PATH); ruff чистый.
-- [ ] T4.7 `yandex-cloud`: раздел Terraform в `facts.md` (провайдер, зеркало, бэкенд `s3`).
+- [x] T4.7 `yandex-cloud`: раздел Terraform в `facts.md` (провайдер, зеркало, бэкенд `s3`).
   Спека: docs/specs/003-terraform-profile.md
-- [ ] T4.8 `cloudru`: профиль Cloud.ru Advanced, навык `cloudru-fact-check` и `facts.md`.
+  Заметки: 2026-11-03, факты по документации Yandex Cloud и запросу к зеркалу; пример `remote_state` с ключами
+  в `config` из документации не взят. В `yc-fact-check` добавлен источник — документация провайдера по тегу.
+- [x] T4.8 `cloudru`: профиль Cloud.ru Advanced, навык `cloudru-fact-check` и `facts.md`.
   Спека: docs/specs/003-terraform-profile.md
+  Заметки: 2026-11-03, факты по документации провайдера v1.13.2. Руководство по бэкенду OBS устарело
+  (`endpoint`, нет `skip_requesting_account_id`, `skip_s3_checksum`): флаги взять из рабочего конфига
+  пользователя и дописать в `facts.md`.
 
 ## Этап 5. Обкатка
 
