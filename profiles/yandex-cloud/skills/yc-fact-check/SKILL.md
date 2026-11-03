@@ -1,6 +1,6 @@
 ---
 name: yc-fact-check
-description: Verify a fact about the Yandex Cloud API (REST path, host, field, enum values, error codes, role, behaviour of the yandexcloud Python SDK) at the primary source — cloudapi proto, endpoint registry, api-ref pages, python-sdk code — and record it with the source; start from the verified general facts in facts.md. Use whenever a project needs a Yandex Cloud API fact. Триггеры — Yandex Cloud, YC, cloudapi, proto, yandexcloud SDK, роль, IAM-токен, сервисный аккаунт.
+description: Verify a fact about the Yandex Cloud API (REST path, host, field, enum values, error codes, role, behaviour of the yandexcloud Python SDK, Terraform provider, mirror and state backend) at the primary source — cloudapi proto, endpoint registry, api-ref pages, python-sdk code — and record it with the source; start from the verified general facts in facts.md. Use whenever a project needs a Yandex Cloud API fact. Триггеры — Yandex Cloud, YC, cloudapi, proto, yandexcloud SDK, роль, IAM-токен, сервисный аккаунт, Terraform-провайдер yandex, Object Storage бэкенд.
 ---
 
 # Checking a fact about the Yandex Cloud API
@@ -33,11 +33,20 @@ fact you use into the project facts document with its source, re-check it at the
    grep -oE '^class [A-Za-z]+Stub' "$S"/yandex/cloud/<service>/v1/<x>_service_pb2_grpc.py
    ```
    If the SDK is installed, the same is visible in `.venv/lib/python3.*/site-packages/yandex*`.
+5. Terraform provider `yandex-cloud/yandex` (arguments, attributes, import ID): the docs of the provider
+   version the project pins, from its repository at that tag; versions on the mirror —
+   `curl -s https://terraform-mirror.yandexcloud.net/registry.terraform.io/yandex-cloud/yandex/index.json`.
+   ```bash
+   T=<scratchpad>/terraform-provider-yandex
+   [ -d "$T" ] || git clone --depth 1 --branch v<version> https://github.com/yandex-cloud/terraform-provider-yandex.git "$T"
+   less "$T"/docs/resources/<resource>.md     # data sources: docs/data-sources/
+   ```
 
 ## Recording
 
 Source tags as in `api-fact-check`: `[spec]` — cloudapi proto `<path>@<commit>`, `[doc]` — page and date,
-`[code]` — python-sdk `<file>@<version>`, `[reg]` — endpoint registry and date.
+`[code]` — python-sdk `<file>@<version>` or terraform-provider-yandex `<file>@<tag>`, `[reg]` — endpoint registry
+and date.
 
 ## Fixture from a fact
 
