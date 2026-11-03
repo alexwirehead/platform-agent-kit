@@ -141,9 +141,18 @@ for d in ${OWN[@]+"${OWN[@]}"}; do
   fi
 done
 OWN=(${KEEP[@]+"${KEEP[@]}"})
+# skill_name <каталог или URL> — имя навыка: последний элемент пути; навык в корне репозитория
+# (URL кончается на tree/<коммит>) называется по репозиторию.
+skill_name() {
+  case "$1" in
+    */tree/*/*) basename "$1" ;;
+    */tree/*) basename "${1%/tree/*}" ;;
+    *) basename "$1" ;;
+  esac
+}
 SKILLS=()
 for d in ${OWN[@]+"${OWN[@]}"} ${THIRD[@]+"${THIRD[@]}"}; do
-  SKILLS+=("$(basename "$d")")
+  SKILLS+=("$(skill_name "$d")")
 done
 
 TMP="$(mktemp -d)"
@@ -228,7 +237,7 @@ for d in ${OWN[@]+"${OWN[@]}"}; do
 done
 if [ "$OFFLINE" -eq 0 ]; then
   for url in ${THIRD[@]+"${THIRD[@]}"}; do
-    echo "== $(basename "$url")"
+    echo "== $(skill_name "$url")"
     (cd "$TARGET" && npx -y "$SKILLS_CLI" add "$url" -a claude-code -a opencode -y)
   done
 fi

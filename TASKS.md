@@ -104,7 +104,7 @@
 - [ ] T4.3 `argocd`: Application, ApplicationSet, проекты.
 - [ ] T4.4 `otel`: экспортеры и коллектор OpenTelemetry.
 - [ ] T4.5 `monitoring`: правила алертов, ServiceMonitor, VictoriaMetrics.
-- [ ] T4.6 `terraform`: навык `terraform-conventions`, правила, пункты ревью, сторонние навыки (terrashark,
+- [~] T4.6 `terraform`: навык `terraform-conventions`, правила, пункты ревью, сторонние навыки (terrashark,
   `terraform-style-guide`, `refactor-module` — после чтения целиком), шаблоны `dev/check-terraform.sh`,
   `.tflint.hcl`, `.pre-commit-config.yaml`, утилиты в девконтейнере, тест шаблона.
   Спека: docs/specs/003-terraform-profile.md

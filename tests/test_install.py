@@ -184,6 +184,20 @@ def test_gitignore_without_newline(kit, project):
     assert "node_modules" in read(project, ".gitignore").splitlines()
 
 
+def test_third_party_skill_names(kit, project):
+    """Имя стороннего навыка — последний элемент пути, для навыка в корне репозитория — имя репозитория."""
+    prof = kit / "profiles" / "test-third"
+    prof.mkdir(exist_ok=True)
+    sha = "0" * 40
+    (prof / "skills.txt").write_text(
+        f"https://github.com/owner/repo/tree/{sha}/skills/sub-skill\nhttps://github.com/owner/root-skill/tree/{sha}\n"
+    )
+    install(kit, project, "test-third")
+    skills = [line for line in read(project, ".agent-kit.lock").splitlines() if line.startswith("skills=")][0]
+    assert {"sub-skill", "root-skill"} <= set(skills.removeprefix("skills=").split())
+    assert sha not in skills
+
+
 @pytest.mark.parametrize("profile", sorted(p.name for p in (ROOT / "profiles").iterdir() if p.is_dir()))
 def test_every_real_profile(kit, project, profile):
     install(kit, project, profile)
