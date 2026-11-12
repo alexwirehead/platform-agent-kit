@@ -349,3 +349,15 @@ def test_check_ci(kit, project):
     (ci / "release.yml").write_text("release:\n  stage: release\n  script: echo release\n")
     (ci / "scripts" / "build.sh").write_text("#!/usr/bin/env bash\necho $1\n")
     assert check_ci(project).returncode != 0
+
+
+def test_install_md_lists_every_profile():
+    """Таблица признаков INSTALL.md: строка на каждый профиль, иначе агент его не предложит."""
+    text = (ROOT / "INSTALL.md").read_text()
+    rows = {line.split("|")[1].strip().strip("`") for line in text.splitlines() if line.startswith("| `")}
+    profiles = {p.name for p in (ROOT / "profiles").iterdir() if p.is_dir()}
+    assert profiles <= rows, f"no row in INSTALL.md for: {sorted(profiles - rows)}"
+
+
+def test_readme_points_agent_to_install_md():
+    assert "INSTALL.md" in (ROOT / "README.md").read_text().split("\n## ")[0]
