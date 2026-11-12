@@ -1,0 +1,1 @@
+- fluxcd-debug: a fix found on the cluster lands as a repository change, not as a manual cluster change
