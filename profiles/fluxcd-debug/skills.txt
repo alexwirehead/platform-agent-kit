@@ -1,0 +1,2 @@
+# Third-party skills: one GitHub tree URL pinned to a commit per line. Bump a commit only after reading the skill diff (decision К3).
+https://github.com/fluxcd/agent-skills/tree/25da0ed5bfdd1d8f779ef79c2c7e336781978d87/skills/gitops-cluster-debug

@@ -110,7 +110,17 @@
   `glab ci lint` на реальном GitLab не проверялся — нет доступа. yamllint и check-jsonschema нет в
   девконтейнере и dev-зависимостях: тест пропускается, прогон — `uv run --with yamllint --with
   check-jsonschema pytest`.
-- [ ] T4.2 `fluxcd`: манифесты FluxCD и Flux Operator.
+- [x] T4.2 `fluxcd` и `fluxcd-debug`: навык `flux-gitops`, сторонние навыки `fluxcd/agent-skills`, правила,
+  ревью, шаблоны `dev/check-flux.sh` и `dev/flux/` по скриптам пользователя, тест шаблонов, утилиты в девконтейнере.
+  Спека: docs/specs/006-fluxcd-profile.md
+  Заметки: 2026-11-12, по ADR и скриптам пользователя без внутренних имён. Навыки `fluxcd/agent-skills@25da0ed`:
+  SKILL.md, скрипты и справочники аудита прочитаны целиком, остальные справочники — по оглавлению и поиску
+  команд, меняющих кластер; схемы — только перечни полей. Отступления — в `rules.md` обоих профилей.
+  `validate-fleet.sh`: имя проекта платформы, метка и папки заказов — переменные из `dev/check-flux.sh`;
+  тенант без папки пропускается. Тест на fleet и компонентах: мутации (без check-refs, validate-fleet,
+  validate-overlays, conventions) ловятся. Утилиты в девконтейнере — блок `RUN` прогнан под `sh` для arm64,
+  образ не собирался. Установка с сетью: 11 навыков, без `fluxcd-debug` его навык уходит.
+  `uv run pytest`: 30 passed, 5 skipped; с утилитами Flux и CI — 33 passed, 2 skipped; ruff чистый.
 - [ ] T4.3 `argocd`: Application, ApplicationSet, проекты.
 - [ ] T4.4 `otel`: экспортеры и коллектор OpenTelemetry.
 - [ ] T4.5 `monitoring`: правила алертов, ServiceMonitor, VictoriaMetrics.

@@ -361,3 +361,124 @@ def test_install_md_lists_every_profile():
 
 def test_readme_points_agent_to_install_md():
     assert "INSTALL.md" in (ROOT / "README.md").read_text().split("\n## ")[0]
+
+
+FLUX_TOOLS = ("kustomize", "kubeconform", "yq", "flux", "flux-operator")
+
+
+def configmap(name, **data):
+    lines = "".join(f"  {k}: {v}\n" for k, v in data.items())
+    return f"apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: {name}\n  namespace: flux-system\ndata:\n{lines}"
+
+
+def kustomization(*resources):
+    return "apiVersion: kustomize.config.k8s.io/v1beta1\nkind: Kustomization\nresources:\n" + "".join(
+        f"  - {r}\n" for r in resources
+    )
+
+
+def git_template(namespace):
+    return (
+        "  resources:\n    - apiVersion: source.toolkit.fluxcd.io/v1\n      kind: GitRepository\n"
+        f'      metadata:\n        name: "<< inputs.name >>"\n        namespace: {namespace}\n'
+        "      spec:\n        interval: 10m\n        url: https://git.example.com/components.git\n"
+        '        ref:\n          name: "<< inputs.ref >>"\n'
+    )
+
+
+def cluster(project, env, name, versions):
+    path = f"clusters/{project}/{env}/{name}"
+    return {
+        f"{path}/kustomization.yaml": kustomization(
+            "flux-system", "runtime-info.yaml", f"../../../../environments/{versions}"
+        ),
+        f"{path}/flux-system/kustomization.yaml": kustomization("flux-instance.yaml"),
+        f"{path}/flux-system/flux-instance.yaml": (
+            "apiVersion: fluxcd.controlplane.io/v1\nkind: FluxInstance\nmetadata:\n  name: flux\n"
+            "  namespace: flux-system\nspec:\n  distribution:\n    version: 2.x\n    registry: ghcr.io/fluxcd\n"
+            "  cluster:\n    multitenant: true\n  sync:\n    kind: GitRepository\n"
+            f"    url: https://git.example.com/fleet.git\n    ref: refs/heads/main\n    path: {path}\n"
+        ),
+        f"{path}/runtime-info.yaml": configmap("flux-runtime-info", ENVIRONMENT=env, CLUSTER_NAME=name),
+    }
+
+
+FLEET = {
+    "environments/platform-dev/kustomization.yaml": kustomization("versions.yaml"),
+    "environments/platform-dev/versions.yaml": configmap("flux-versions", DEMO_REF="refs/heads/main"),
+    "environments/dev/kustomization.yaml": kustomization("versions.yaml"),
+    "environments/dev/versions.yaml": configmap("flux-versions", DEMO_REF="refs/tags/demo/v1.0.0"),
+    **cluster("platform", "dev", "lab-01", "platform-dev"),
+    **cluster("acme", "dev", "app-01", "dev"),
+    "clusters/acme/dev/app-01/apps/demo-app.yaml": (
+        "apiVersion: fluxcd.controlplane.io/v1\nkind: ResourceSetInputProvider\nmetadata:\n  name: demo-app\n"
+        "  namespace: flux-system\n  labels:\n    example.com/kind: app\nspec:\n  type: Static\n"
+        '  defaultValues:\n    name: demo-app\n    ref: "${DEMO_REF}"\n'
+    ),
+    "tenants/infra/kustomization.yaml": kustomization("resourceset.yaml"),
+    "tenants/infra/resourceset.yaml": (
+        "apiVersion: fluxcd.controlplane.io/v1\nkind: ResourceSet\nmetadata:\n  name: infra\n"
+        '  namespace: flux-system\nspec:\n  inputs:\n    - name: demo\n      ref: "${DEMO_REF}"\n'
+        + git_template("flux-system")
+    ),
+    "tenants/apps/kustomization.yaml": kustomization("resourceset.yaml"),
+    "tenants/apps/resourceset.yaml": (
+        "apiVersion: fluxcd.controlplane.io/v1\nkind: ResourceSet\nmetadata:\n  name: apps\n"
+        "  namespace: flux-system\nspec:\n  inputsFrom:\n    - kind: ResourceSetInputProvider\n"
+        "      selector:\n        matchLabels:\n          example.com/kind: app\n" + git_template('"<< inputs.name >>"')
+    ),
+}
+COMPONENTS = {
+    "infra/demo/controllers/base/kustomization.yaml": kustomization("demo.yaml"),
+    "infra/demo/controllers/base/demo.yaml": configmap("demo", LEVEL="info"),
+    "infra/demo/controllers/dev/kustomization.yaml": kustomization("../base"),
+}
+
+
+def write_tree(root, files):
+    for name, text in files.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(text)
+
+
+def check_flux(project):
+    return subprocess.run([str(project / "dev" / "check-flux.sh")], capture_output=True, text=True)
+
+
+@pytest.mark.skipif(not all(map(shutil.which, FLUX_TOOLS)), reason="no flux tools")
+def test_check_flux_fleet(kit, project):
+    install(kit, project, "fluxcd")
+    script = project / "dev" / "check-flux.sh"
+    write_tree(project, FLEET)
+    assert "PLATFORM_PROJECT and ORDER_LABEL" in check_flux(project).stdout
+    script.write_text(
+        script.read_text().replace("<platform-project>", "platform").replace("<domain>/kind", "example.com/kind")
+    )
+    result = check_flux(project)
+    assert result.returncode == 0, result.stdout + result.stderr
+    broken = {
+        # check-refs.sh: ключ не <ИМЯ>_REF validate-fleet.sh не видит.
+        "environments/platform-dev/versions.yaml": ("DEMO_REF", "DEMO_REF: refs/heads/main\n  DEMO_VERSION"),
+        # validate-fleet.sh: пользовательский проект смотрит в ветку.
+        "environments/dev/versions.yaml": ("refs/tags/demo/v1.0.0", "refs/heads/main"),
+        # Опечатку ловят оба: check-refs.sh до сборки, validate-fleet.sh после.
+        "tenants/infra/resourceset.yaml": ("${DEMO_REF}", "{DEMO_REF}"),
+    }
+    for name, (old, new) in broken.items():
+        (project / name).write_text(FLEET[name].replace(old, new))
+        assert check_flux(project).returncode != 0, name
+        (project / name).write_text(FLEET[name])
+
+
+@pytest.mark.skipif(not all(map(shutil.which, FLUX_TOOLS)), reason="no flux tools")
+def test_check_flux_components(kit, project):
+    install(kit, project, "fluxcd")
+    write_tree(project, COMPONENTS)
+    result = check_flux(project)
+    assert result.returncode == 0, result.stdout + result.stderr
+    extra = project / "infra" / "demo" / "controllers" / "base" / "extra.yml"
+    extra.write_text(configmap("extra"))
+    assert check_flux(project).returncode != 0
+    extra.unlink()
+    (project / "infra" / "demo" / "controllers" / "dev" / "kustomization.yaml").write_text(kustomization("../missing"))
+    assert check_flux(project).returncode != 0

@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
 # Образ для разработки platform-agent-kit: bash-установщик, тесты на pytest через uv
 # (решение К10), helm и kubeconform для теста шаблона dev/check-chart.sh, terraform, terragrunt,
-# tflint, trivy и terraform-docs для теста шаблона dev/check-terraform.sh.
+# tflint, trivy и terraform-docs для теста шаблона dev/check-terraform.sh, kustomize, flux,
+# flux-operator и yq для теста шаблонов dev/check-flux.sh.
 # Версии закреплены, загрузки сверяются с sha256 из файлов контрольных сумм
 # релизов: при обрыве сети или подмене файла сборка падает. Python скачивает uv
 # и сам сверяет его хеш. Обновление — правка ARG вместе с хешами для arm64 и
@@ -41,6 +42,21 @@ ARG TRIVY_SHA256_AMD64=e24b1c51293c1b15e4ba8d45bbc7891ba053f90278ec2698f3562c993
 ARG TERRAFORM_DOCS_VERSION=0.24.0
 ARG TERRAFORM_DOCS_SHA256_ARM64=d12bd7b73c1fc9c64efc79f8157dd713dabd559f1ecf3cfc0f42e32279a155fd
 ARG TERRAFORM_DOCS_SHA256_AMD64=9005daf969de0b50134493a2c00078b49f5f5b39d021cda7c89bf4d4f3d776d3
+# kustomize, flux, flux-operator, yq — тест шаблонов dev/check-flux.sh профиля fluxcd, кластер не
+# нужен (kubeconform — выше). Версии старше двух недель на момент выбора, sha256 из файлов
+# контрольных сумм релизов.
+ARG KUSTOMIZE_VERSION=5.8.3
+ARG KUSTOMIZE_SHA256_ARM64=9867b76482cfc6d25b546abc1d2b5a32bd137505aba640649b4b378f64f6d68f
+ARG KUSTOMIZE_SHA256_AMD64=cb9e31198d3f63b44848bd0afc4c8efc56e6cfef9c93a4a39a211940e6decd61
+ARG FLUX_VERSION=2.10.0
+ARG FLUX_SHA256_ARM64=c3c435052e5e18156858bc73f26bcadb62821a6e30951b4b302beb4e65a532c2
+ARG FLUX_SHA256_AMD64=208dd7012c04fedeed5b2d0b6e63df3b15b1c34a381527811685c098bc9f8659
+ARG FLUX_OPERATOR_VERSION=0.62.1
+ARG FLUX_OPERATOR_SHA256_ARM64=4f427dd86747472f83144487404b8f77296660356d0b90859a14abbe6065a8e8
+ARG FLUX_OPERATOR_SHA256_AMD64=7bb9e54d370039d8701d4271b38aed57d6c89668432b7caddce69f4e26e24c1b
+ARG YQ_VERSION=4.54.1
+ARG YQ_SHA256_ARM64=189088da0c6429ec5178dfaab1a114805f6cab0b61b165ab236efedf1d57a71b
+ARG YQ_SHA256_AMD64=8e34fc298390875de416e6a4afcb8cabeceb25d9aa8506c1a2f9353cf702ea5f
 # Задаёт BuildKit: arm64 на Apple Silicon, amd64 на Intel.
 ARG TARGETARCH
 
@@ -109,6 +125,30 @@ RUN set -eux; \
     tar xzf terraform-docs.tgz -C /usr/local/bin terraform-docs; \
     cd /; rm -rf "$t"; \
     terraform version; terragrunt --version; tflint --version; trivy --version; terraform-docs --version
+
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+      arm64) kz_sha="${KUSTOMIZE_SHA256_ARM64}"; fx_sha="${FLUX_SHA256_ARM64}"; \
+             fo_sha="${FLUX_OPERATOR_SHA256_ARM64}"; yq_sha="${YQ_SHA256_ARM64}" ;; \
+      amd64) kz_sha="${KUSTOMIZE_SHA256_AMD64}"; fx_sha="${FLUX_SHA256_AMD64}"; \
+             fo_sha="${FLUX_OPERATOR_SHA256_AMD64}"; yq_sha="${YQ_SHA256_AMD64}" ;; \
+      *) echo "unsupported arch ${TARGETARCH}"; exit 1 ;; \
+    esac; \
+    t="$(mktemp -d)"; cd "$t"; \
+    get() { curl -fsSL --retry 5 --retry-all-errors -o "$2" "$1"; echo "$3  $2" | sha256sum -c -; }; \
+    get "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_${TARGETARCH}.tar.gz" \
+      kustomize.tgz "${kz_sha}"; \
+    tar xzf kustomize.tgz -C /usr/local/bin kustomize; \
+    get "https://github.com/fluxcd/flux2/releases/download/v${FLUX_VERSION}/flux_${FLUX_VERSION}_linux_${TARGETARCH}.tar.gz" \
+      flux.tgz "${fx_sha}"; \
+    tar xzf flux.tgz -C /usr/local/bin flux; \
+    get "https://github.com/controlplaneio-fluxcd/flux-operator/releases/download/v${FLUX_OPERATOR_VERSION}/flux-operator_${FLUX_OPERATOR_VERSION}_linux_${TARGETARCH}.tar.gz" \
+      flux-operator.tgz "${fo_sha}"; \
+    tar xzf flux-operator.tgz -C /usr/local/bin flux-operator; \
+    get "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_${TARGETARCH}" yq "${yq_sha}"; \
+    install -m 0755 yq /usr/local/bin/yq; \
+    cd /; rm -rf "$t"; \
+    kustomize version; flux version --client; yq --version
 
 # Python ставится в общий каталог, а не в домашний root: так его видит
 # пользователь vscode. Владелец vscode, чтобы uv в контейнере мог доставить

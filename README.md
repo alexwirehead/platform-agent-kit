@@ -8,7 +8,7 @@
 
 Статус: версия 1 готова — ядро, установщик и пять профилей (спецификация `docs/specs/001-kit-v1.md`).
 Профиль `terraform` — спецификация `docs/specs/003-terraform-profile.md`, `gitlab-ci` —
-`docs/specs/004-gitlab-ci-profile.md`.
+`docs/specs/004-gitlab-ci-profile.md`, `fluxcd` — `docs/specs/006-fluxcd-profile.md`.
 Дальше — профили-заготовки по интервью и перевод существующих проектов на кит, план в `TASKS.md`.
 
 ## Как устроен
@@ -34,10 +34,12 @@
 | `grafana` | любой дашборд Grafana JSON-ом в репозитории | `grafana-dashboard` |
 | `terraform` | модули Terraform и live-репозитории Terragrunt, офлайн-проверки `dev/check-terraform.sh`; облако — профиль `yandex-cloud` или `cloudru` | `terraform-conventions`; сторонние `terrashark`, `terraform-style-guide`, `refactor-module` |
 | `cloudru` | Cloud.ru Advanced: провайдер `sbercloud`, OBS; требует `external-api` | `cloudru-fact-check` |
+| `fluxcd` | GitOps на Flux Operator: fleet и компоненты, версии окружений, заказ сервиса файлом, офлайн-проверки `dev/check-flux.sh` | `flux-gitops`; сторонние `gitops-knowledge`, `gitops-repo-audit` |
+| `fluxcd-debug` | отладка живого кластера через MCP-сервер Flux только на чтение; требует `fluxcd`, ставится по желанию | сторонний `gitops-cluster-debug` |
 | `gitlab-ci` | пайплайны и компоненты CI/CD GitLab: оценка, нужен ли компонент, перевод старых шаблонов, офлайн-проверки `dev/check-ci.sh` | `gitlab-ci-components` |
 
 Что даёт каждый профиль — `profiles/<имя>/README.md`. Заготовки на будущее, пока без правил:
-`fluxcd`, `argocd`, `otel`, `monitoring` — правила появятся после интервью (решение К4).
+`argocd`, `otel`, `monitoring` — правила появятся после интервью (решение К4).
 
 ## Установка в проект
 

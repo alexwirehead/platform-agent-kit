@@ -1,0 +1,1 @@
+- Flux repositories: fleet `<fleet>`, components `<components>`; platform dev project `<platform-project>`, order label `<domain>/kind` (also set in `dev/check-flux.sh`).

@@ -1,0 +1,5 @@
+- fluxcd: outside the platform dev environment every `<COMPONENT>_REF` is a protected tag `refs/tags/<component>/vX.Y.Z`
+- fluxcd: overlays differ only in sizes, replicas, endpoints and secret references, never in structure
+- fluxcd: an order folder contains only `ResourceSetInputProvider` orders with its label
+- fluxcd: `runtime-info.yaml` holds no secrets; no unencrypted `Secret` in the repository
+- fluxcd: a change of `prune`, a removed service or component is justified — what happens to its resources and data
