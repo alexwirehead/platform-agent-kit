@@ -5,7 +5,8 @@
 то, что уже обкатано в работе.
 
 Статус: версия 1 готова — ядро, установщик и пять профилей (спецификация `docs/specs/001-kit-v1.md`).
-Профиль `terraform` — спецификация `docs/specs/003-terraform-profile.md`.
+Профиль `terraform` — спецификация `docs/specs/003-terraform-profile.md`, `gitlab-ci` —
+`docs/specs/004-gitlab-ci-profile.md`.
 Дальше — профили-заготовки по интервью и перевод существующих проектов на кит, план в `TASKS.md`.
 
 ## Как устроен
@@ -31,8 +32,9 @@
 | `grafana` | любой дашборд Grafana JSON-ом в репозитории | `grafana-dashboard` |
 | `terraform` | модули Terraform и live-репозитории Terragrunt, офлайн-проверки `dev/check-terraform.sh`; облако — профиль `yandex-cloud` или `cloudru` | `terraform-conventions`; сторонние `terrashark`, `terraform-style-guide`, `refactor-module` |
 | `cloudru` | Cloud.ru Advanced: провайдер `sbercloud`, OBS; требует `external-api` | `cloudru-fact-check` |
+| `gitlab-ci` | пайплайны и компоненты CI/CD GitLab: оценка, нужен ли компонент, перевод старых шаблонов, офлайн-проверки `dev/check-ci.sh` | `gitlab-ci-components` |
 
-Что даёт каждый профиль — `profiles/<имя>/README.md`. Заготовки на будущее, пока без правил: `cicd`,
+Что даёт каждый профиль — `profiles/<имя>/README.md`. Заготовки на будущее, пока без правил:
 `fluxcd`, `argocd`, `otel`, `monitoring` — правила появятся после интервью (решение К4).
 
 ## Установка в проект

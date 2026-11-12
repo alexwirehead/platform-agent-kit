@@ -299,3 +299,53 @@ def test_check_terraform_live(kit, project):
     assert result.returncode == 0, result.stdout + result.stderr
     (unit / "terragrunt.hcl").write_text('include "root" {\npath = find_in_parent_folders("root.hcl")\n}\n')
     assert check_terraform(project).returncode != 0
+
+
+CI_TOOLS = ("yamllint", "check-jsonschema", "shellcheck")
+CI_TEMPLATE = """spec:
+  inputs:
+    stage:
+      description: Stage of the job
+      default: build
+    parallel:
+      description: Number of jobs
+      type: number
+      default: 2
+---
+build:
+  stage: $[[ inputs.stage ]]
+  parallel: $[[ inputs.parallel ]]
+  script:
+    - .gitlab/ci/scripts/build.sh
+"""
+CI_PIPELINE = """include:
+  - component: $CI_SERVER_FQDN/$CI_PROJECT_PATH/build@$CI_COMMIT_SHA
+  - local: .gitlab/ci/release.yml
+
+stages: [build, release]
+"""
+
+
+def check_ci(project):
+    return subprocess.run([str(project / "dev" / "check-ci.sh")], capture_output=True, text=True)
+
+
+@pytest.mark.skipif(not all(map(shutil.which, CI_TOOLS)), reason="no gitlab-ci tools")
+def test_check_ci(kit, project):
+    install(kit, project, "gitlab-ci")
+    (project / "templates" / "build").mkdir(parents=True)
+    (project / "templates" / "build" / "template.yml").write_text(CI_TEMPLATE)
+    ci = project / ".gitlab" / "ci"
+    (ci / "scripts").mkdir(parents=True)
+    (ci / "scripts" / "build.sh").write_text('#!/usr/bin/env bash\necho "build"\n')
+    (ci / "release.yml").write_text(
+        "release:\n  stage: release\n  rules:\n    - if: $CI_COMMIT_TAG\n  script: echo release\n"
+    )
+    (project / ".gitlab-ci.yml").write_text(CI_PIPELINE)
+    result = check_ci(project)
+    assert result.returncode == 0, result.stdout + result.stderr
+    (ci / "release.yml").write_text("release:\n  stage: release\n  scirpt: echo release\n")
+    assert check_ci(project).returncode != 0
+    (ci / "release.yml").write_text("release:\n  stage: release\n  script: echo release\n")
+    (ci / "scripts" / "build.sh").write_text("#!/usr/bin/env bash\necho $1\n")
+    assert check_ci(project).returncode != 0

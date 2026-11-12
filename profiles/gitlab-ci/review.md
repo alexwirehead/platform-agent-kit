@@ -1,0 +1,6 @@
+- gitlab-ci: a new component has an assessment with its consumers and the reason; a template with one consumer stays local
+- gitlab-ci: every input has a `description`
+- gitlab-ci: `script:` has no branches, loops or functions — they are in `.gitlab/ci/scripts/` or in the component's image
+- gitlab-ci: the image tag in a component template matches the release tag
+- gitlab-ci: a consumer includes a component by `@<major>` or `@<major>.<minor>`, never a branch, SHA or `~latest`
+- gitlab-ci: no secrets in pipelines and templates

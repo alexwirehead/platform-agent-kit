@@ -1,0 +1,1 @@
+| writing or reviewing `.gitlab-ci.yml`, `.gitlab/ci/*.yml` or a component template; deciding whether a component is needed; migrating old templates to components | `gitlab-ci-components`; check `dev/check-ci.sh`, then `glab ci lint` |
