@@ -99,7 +99,17 @@
 
 Каждая: интервью с пользователем → спецификация → правила. Без интервью правила не пишутся (К4).
 
-- [ ] T4.1 `cicd`: GitLab CI и/или GitHub Actions.
+- [x] T4.1 `gitlab-ci`: навык `gitlab-ci-components` (оценка, нужен ли компонент; перевод старых шаблонов;
+  репозиторий компонента; релиз; потребители), правила, пункты ревью, шаблон `dev/check-ci.sh`, тест шаблона.
+  Спека: docs/specs/004-gitlab-ci-profile.md
+  Заметки: 2026-11-12, по интервью; заготовка `cicd` заменена (К4, К14). Факты — документация GitLab (ctx7):
+  частичные версии только для компонентов из CI/CD Catalog. Проверено: yamllint читает шаблон с двумя
+  документами (правило `document-start` отключено), check-jsonschema — нет, а input с `type: number` до
+  подстановки даёт ложную ошибку схемы; поэтому схема только для `.gitlab-ci.yml` и `.gitlab/ci/*.yml`,
+  шаблон проверяют самоподключение и `glab ci lint`. Мутации (без схемы, без shellcheck) тест ловит.
+  `glab ci lint` на реальном GitLab не проверялся — нет доступа. yamllint и check-jsonschema нет в
+  девконтейнере и dev-зависимостях: тест пропускается, прогон — `uv run --with yamllint --with
+  check-jsonschema pytest`.
 - [ ] T4.2 `fluxcd`: манифесты FluxCD и Flux Operator.
 - [ ] T4.3 `argocd`: Application, ApplicationSet, проекты.
 - [ ] T4.4 `otel`: экспортеры и коллектор OpenTelemetry.
