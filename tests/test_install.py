@@ -363,6 +363,15 @@ def test_readme_points_agent_to_install_md():
     assert "INSTALL.md" in (ROOT / "README.md").read_text().split("\n## ")[0]
 
 
+def test_rules_keep_workflow_after_compaction():
+    """Загруженный навык теряется при сжатии контекста, блок AGENTS.md — нет (К17)."""
+    skill = (ROOT / "core" / "skills" / "change-workflow" / "SKILL.md").read_text()
+    order = skill.split("Order is fixed: **")[1].split("**")[0]
+    rules = " ".join((ROOT / "core" / "rules.md").read_text().split())
+    assert order in rules
+    assert "compaction" in rules
+
+
 FLUX_TOOLS = ("kustomize", "kubeconform", "yq", "flux", "flux-operator")
 
 

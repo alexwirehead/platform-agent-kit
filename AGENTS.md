@@ -7,7 +7,7 @@
 
 Кит работает по своему ядру (К12): блок ниже ставит `./install.sh .`, профили в кит не ставятся.
 
-- Decision log: `docs/00-overview.md`, раздел 4 (К1–К12).
+- Decision log: `docs/00-overview.md`, раздел 4 (К1–К17).
 - Full verification command: `uv run pytest && uv run ruff check && uv run ruff format --check` —
   тесты установщика, shellcheck (К10) и ruff.
 
@@ -42,7 +42,8 @@
 ## Starting a session
 
 1. Read this file and `TASKS.md`.
-2. Take the first task marked `[~]`; if none, the first `[ ]` in order.
+2. Take the first task marked `[~]`; if none, the first `[ ]` in order. A new request that changes
+   behaviour has no task yet: start it with `change-workflow`.
 3. Read only the documents the task links to and its spec (the `Спека:` line).
 4. Do the task, check it against the spec's «Готово, когда», update `TASKS.md`.
 
@@ -65,15 +66,16 @@
    or has several reasonable options, ask before editing a spec or code (Claude Code:
    `AskUserQuestion`, OpenCode: `question`). Give options with honest pros and cons, the recommended
    one first.
-7. **Spec first, then task, then code.** Any behaviour change follows `change-workflow`. Without a
-   spec you may only fix code to match already described behaviour, refactor without behaviour
-   change, fix typos and docs.
+7. **Spec first, then task, then code.** Any behaviour change follows `change-workflow` in a fixed
+   order: spec → task → failing test → code → docs → branch merge. Without a spec you may only fix
+   code to match already described behaviour, refactor without behaviour change, fix typos and docs.
 
 ## Skills
 
 Load a skill only when its situation from the table below occurs, not in advance. Do not load the
-same skill twice in a session. Library and tool docs come through the `ctx7` CLI:
-`npx ctx7@latest library <name> "<query>"`, then `npx ctx7@latest docs <id> "<query>"`.
+same skill twice in a session, unless its text is no longer in your context (after context
+compaction): then load it again before the next step. Library and tool docs come through the
+`ctx7` CLI: `npx ctx7@latest library <name> "<query>"`, then `npx ctx7@latest docs <id> "<query>"`.
 
 Deviations of the project from a skill are written in the project section of this file, never in
 the skill files: skills are installed as is.
