@@ -194,6 +194,11 @@
   с профилями helm, python-exporter, terraform, gitlab-ci — 2535 и 1229. `--hf zai-org/GLM-5.3-Flash` работает,
   расхождение с `o200k_base` 1–2%. Мутация (симлинк считается дважды) ловится. `uv run pytest`: 33 passed,
   5 skipped; с утилитами — 36 passed, 2 skipped; ruff чистый.
+- [~] T5.11 Проект без кита: адрес кита `source=` в `.agent-kit.lock`, остановка агента без `change-workflow`,
+  клон по `source=` в `INSTALL.md`; тесты.
+  Спека: docs/specs/009-missing-kit.md
+  Заметки: 2026-11-18, мутация (адрес с паролем в lock) ловится. `uv run pytest`: 39 passed, 1 skipped; с утилитами —
+  40 passed; ruff чистый. Осталась ручная проверка пользователя. Ветка: feature/009-missing-kit
 - [x] T5.4 Удалённый репозиторий кита: где хранить и как обновлять в проектах (вопрос пользователю).
   Заметки: 2026-10-24, решение К11: GitHub `alexwirehead/platform-agent-kit`, remote `origin`. В проекте
   обновление — `git pull` в клоне кита и повторный `install.sh`. Первый push — с мака: в девконтейнере

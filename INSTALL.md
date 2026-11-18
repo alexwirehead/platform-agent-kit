@@ -10,9 +10,10 @@ kit has no profile for. Never commit.
 ## 1. Find the kit
 
 - If a clone exists at `~/projects/platform-agent-kit`, run `git pull` in it and use it.
-- Otherwise propose `~/projects/platform-agent-kit` and ask the user where to clone. Clone over HTTPS:
-  `git clone https://github.com/alexwirehead/platform-agent-kit.git <path>` — the repository is public,
-  no SSH key is needed.
+- Otherwise propose `~/projects/platform-agent-kit` and ask the user where to clone. If the project's
+  `.agent-kit.lock` has a `source=` line other than `unknown`, clone from that address. Otherwise
+  clone over HTTPS: `git clone https://github.com/alexwirehead/platform-agent-kit.git <path>` — the
+  repository is public, no SSH key is needed.
 - The installer needs `bash`, `git` and `npx`. If `npx` is missing, tell the user and stop: never
   install the kit around `install.sh`.
 

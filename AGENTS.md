@@ -7,7 +7,7 @@
 
 Кит работает по своему ядру (К12): блок ниже ставит `./install.sh .`, профили в кит не ставятся.
 
-- Decision log: `docs/00-overview.md`, раздел 4 (К1–К17).
+- Decision log: `docs/00-overview.md`, раздел 4 (К1–К19).
 - Full verification command: `uv run pytest && uv run ruff check && uv run ruff format --check` —
   тесты установщика, shellcheck (К10) и ruff.
 
@@ -41,11 +41,15 @@
 
 ## Starting a session
 
-1. Read this file and `TASKS.md`.
-2. Take the first task marked `[~]`; if none, the first `[ ]` in order. A new request that changes
+1. If `change-workflow` is not among your skills, the kit is not installed in this checkout: stop and
+   tell the user. Give the kit address (`source=`) and the profiles (`profiles=`) from
+   `.agent-kit.lock` and offer to install the kit by its `INSTALL.md`; install only when the user asks.
+   Never work without the skills or guess what a skill says.
+2. Read this file and `TASKS.md`.
+3. Take the first task marked `[~]`; if none, the first `[ ]` in order. A new request that changes
    behaviour has no task yet: start it with `change-workflow`.
-3. Read only the documents the task links to and its spec (the `Спека:` line).
-4. Do the task, check it against the spec's «Готово, когда», update `TASKS.md`.
+4. Read only the documents the task links to and its spec (the `Спека:` line).
+5. Do the task, check it against the spec's «Готово, когда», update `TASKS.md`.
 
 ## Rules that must not be broken
 
