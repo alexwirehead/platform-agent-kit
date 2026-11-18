@@ -7,7 +7,7 @@
 
 Кит работает по своему ядру (К12): блок ниже ставит `./install.sh .`, профили в кит не ставятся.
 
-- Decision log: `docs/00-overview.md`, раздел 4 (К1–К19).
+- Decision log: `docs/00-overview.md`, раздел 4 (К1–К20).
 - Full verification command: `uv run pytest && uv run ruff check && uv run ruff format --check` —
   тесты установщика, shellcheck (К10) и ruff.
 
@@ -32,9 +32,9 @@
 
 ### Ветки и мерж
 
-В `main` не коммитят; ветка `feature/NNN-slug` по спецификации, иначе `fix/<slug>` или `docs/<slug>`.
-Коммит после каждой задачи. Мерж — PR на GitHub через merge-коммит (как `--no-ff`), только после
-полной проверки и явного «мержи» от пользователя.
+Отступление от `change-workflow` и «Commit messages» (К20): у кита нет Jira. Ветка `feature/NNN-slug`
+по номеру спецификации, иначе `fix/<slug>` или `docs/<slug>`; коммиты без ключа. Коммит после каждой
+задачи. Push и PR на GitHub делает пользователь, он же мержит через merge-коммит после полной проверки.
 
 <!-- platform-agent-kit:begin -->
 <!-- Managed by platform-agent-kit install.sh; edits inside this block are overwritten. -->
@@ -72,7 +72,7 @@
    `AskUserQuestion`, OpenCode: `question`). Give options with honest pros and cons, the recommended
    one first.
 7. **Spec first, then task, then code.** Any behaviour change follows `change-workflow` in a fixed
-   order: spec → task → failing test → code → docs → branch merge. Without a spec you may only fix
+   order: spec → task → failing test → code → docs → merge request. Without a spec you may only fix
    code to match already described behaviour, refactor without behaviour change, fix typos and docs.
 
 ## Skills
@@ -92,17 +92,20 @@ names, log and exception messages are in English.
 
 ## Commit messages
 
-Conventional Commits 1.0.0: `<type>(<scope>): <description>`, then an optional body and footers,
-each after a blank line.
+Conventional Commits 1.0.0: `<type>(<scope>): <KEY> <description>`, then optional footers.
 
 - Type in English: `feat` (new feature), `fix` (bug fix); other changes `build`, `chore`, `ci`,
   `docs`, `style`, `refactor`, `perf`, `test`.
 - Scope: the area of code (module, chart, profile), a noun; omit it when the change spans the repo.
-- Description and body in Russian, description short, without a trailing period.
+- `<KEY>`: the Jira issue key from the branch name; no key in the branch — no key in the commit.
+- Description in Russian, short, without a trailing period; the header fits in 72 characters.
+- Keep it short. By default the header is the whole message. Add a body of at most three lines only
+  when the reason is not visible from the diff: why, not what. No file lists, no retelling of the
+  diff — details go to the merge request description.
 - Footers: `Задача: T2.2` for the task; a breaking change — `!` before the colon and a
   `BREAKING CHANGE: <what breaks>` footer.
 
-Example: `feat(chart): ServiceMonitor включается из values`.
+Example: `chore(variables): PROJ-123 изменён node_group_presets`.
 
 ## Skills table
 

@@ -1,11 +1,11 @@
 ---
 name: change-workflow
-description: How a change is made in a project — spec in docs/specs/NNN-slug.md, task in TASKS.md, failing test, code, docs update, git branch and merge. Use for any behaviour change (feature, metric, config option, alert, dashboard panel, chart value, deploy) and when starting, finishing or merging a task. Триггеры — доработка, новая фича, спецификация, спека, задача, TASKS.md, ветка, мерж.
+description: How a change is made in a project — spec in docs/specs/NNN-slug.md, task in TASKS.md, failing test, code, docs update, git branch and merge request. Use for any behaviour change (feature, metric, config option, alert, dashboard panel, chart value, deploy) and when starting or finishing a task. Триггеры — доработка, новая фича, спецификация, спека, задача, TASKS.md, ветка, мерж.
 ---
 
 # Change workflow
 
-Order is fixed: **spec → task → failing test → code → docs → branch merge**. Never skip ahead.
+Order is fixed: **spec → task → failing test → code → docs → merge request**. Never skip ahead.
 
 ## 1. Spec
 
@@ -43,16 +43,17 @@ the current state (listed in the spec's «Затронутые документ�
   After that the spec file is never edited.
 - Commit after every finished task.
 
-## 5. Branches and merge
+## 5. Branch and merge request
 
-- No direct commits to `main`. Branch from a fresh `main`: `feature/NNN-slug` by spec number; work
-  without a spec — `fix/<slug>` or `docs/<slug>`. One branch — one feature or one fix.
-- The branch is ready when the project's full verification command is clean.
-- Code, charts, dashboards, deploy: merge only after the user has checked the branch on the real
-  environment and confirmed it. Docs, specs, rules, dev tooling: after verification and an explicit
-  "merge" from the user.
-- Merge: `git switch main && git merge --no-ff <branch>`; the merge message follows the commit
-  message rules (Conventional Commits), its body references the spec: `Спека: docs/specs/NNN-slug.md`.
-  Delete the branch after merge (`git branch -d`).
-- Never merge without confirmation. A branch waiting for a check is recorded as `Ветка: <name>` in the
-  task notes.
+- No direct commits to `main`. Branch from a fresh `main`: `<type>/<KEY>-<slug>`, for example
+  `feature/PROJ-123-node-group-presets`; `<type>` is `feature`, `fix` or `docs`. One branch — one
+  feature or one fix.
+- `<KEY>` is the Jira issue key: from the user's request or the current branch name. Not found — ask
+  before creating the branch, never invent one. If the user says there is no issue, the branch and the
+  commits go without a key.
+- The branch is ready when the work is committed and the project's full verification command is clean.
+- You never push, open a merge request or merge. Give the user a merge request title (like the commit
+  header) and a short description: what and why, how it was checked, the spec link
+  `docs/specs/NNN-slug.md`. The user pushes, opens the merge request in GitLab and merges after review.
+- Code, charts, dashboards, deploy: say what the user has to check on the real environment before the
+  merge. A branch waiting for the merge is recorded as `Ветка: <name>` in the task notes.

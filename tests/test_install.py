@@ -386,6 +386,16 @@ def test_readme_points_agent_to_install_md():
     assert "INSTALL.md" in (ROOT / "README.md").read_text().split("\n## ")[0]
 
 
+def test_core_agent_never_merges():
+    """Мерж делает человек через MR; коммит с ключом Jira и коротким телом (К20)."""
+    skill = (ROOT / "core" / "skills" / "change-workflow" / "SKILL.md").read_text()
+    assert "git merge" not in skill
+    assert "merge request**" in skill
+    rules = " ".join((ROOT / "core" / "rules.md").read_text().split())
+    assert "`<type>(<scope>): <KEY> <description>`" in rules
+    assert "at most three lines" in rules
+
+
 def test_rules_keep_workflow_after_compaction():
     """Загруженный навык теряется при сжатии контекста, блок AGENTS.md — нет (К17)."""
     skill = (ROOT / "core" / "skills" / "change-workflow" / "SKILL.md").read_text()
