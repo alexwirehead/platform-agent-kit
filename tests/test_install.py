@@ -396,6 +396,17 @@ def test_core_agent_never_merges():
     assert "at most three lines" in rules
 
 
+def test_core_human_gates():
+    """Две остановки для человека: одобрение спеки и коммит; файл спеки важнее сводки сжатия (К21)."""
+    skill = " ".join((ROOT / "core" / "skills" / "change-workflow" / "SKILL.md").read_text().split())
+    rules = " ".join((ROOT / "core" / "rules.md").read_text().split())
+    for text in (skill, rules):
+        assert "Stop for the user twice" in text
+    assert "only after the user's explicit yes" in skill
+    assert "the spec file wins over the compaction summary" in skill
+    assert "Before every commit" in skill
+
+
 def test_rules_keep_workflow_after_compaction():
     """Загруженный навык теряется при сжатии контекста, блок AGENTS.md — нет (К17)."""
     skill = (ROOT / "core" / "skills" / "change-workflow" / "SKILL.md").read_text()
