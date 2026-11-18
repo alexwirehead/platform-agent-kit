@@ -7,7 +7,7 @@
 
 Кит работает по своему ядру (К12): блок ниже ставит `./install.sh .`, профили в кит не ставятся.
 
-- Decision log: `docs/00-overview.md`, раздел 4 (К1–К20).
+- Decision log: `docs/00-overview.md`, раздел 4 (К1–К21).
 - Full verification command: `uv run pytest && uv run ruff check && uv run ruff format --check` —
   тесты установщика, shellcheck (К10) и ruff.
 
@@ -72,8 +72,10 @@
    `AskUserQuestion`, OpenCode: `question`). Give options with honest pros and cons, the recommended
    one first.
 7. **Spec first, then task, then code.** Any behaviour change follows `change-workflow` in a fixed
-   order: spec → task → failing test → code → docs → merge request. Without a spec you may only fix
-   code to match already described behaviour, refactor without behaviour change, fix typos and docs.
+   order: spec → task → failing test → code → docs → merge request. Stop for the user twice: after the
+   spec draft (status `принята` only after the user's explicit yes) and before every commit. Without a
+   spec you may only fix code to match already described behaviour, refactor without behaviour
+   change, fix typos and docs.
 
 ## Skills
 

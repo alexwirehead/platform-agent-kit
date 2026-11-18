@@ -7,6 +7,10 @@ description: How a change is made in a project — spec in docs/specs/NNN-slug.m
 
 Order is fixed: **spec → task → failing test → code → docs → merge request**. Never skip ahead.
 
+Stop for the user twice: after the spec draft and before every commit. Each stop is a question with
+the question tool (Claude Code: `AskUserQuestion`, OpenCode: `question`) that ends your turn; do not
+go on until the user answers.
+
 ## 1. Spec
 
 Any behaviour change starts with `docs/specs/NNN-slug.md` made from the template in
@@ -18,7 +22,12 @@ Any behaviour change starts with `docs/specs/NNN-slug.md` made from the template
   pros and cons, recommended first).
 - A decision made along the way goes to the project's decision log (number, date, who decided,
   reason); the spec links to it.
-- An unanswered open question keeps the spec in `черновик`. Agreed with the user — `принята`.
+- An unanswered open question keeps the spec in `черновик`.
+- **Stop 1 — spec approval.** Show the user a summary of «Что меняется» and «Готово, когда» and ask:
+  accept or change. Set the status to `принята ГГГГ-ММ-ДД, пользователь` only after the user's explicit
+  yes to this question. Interview answers are not an approval. Before it: no task, no test, no code.
+- After context compaction the spec file wins over the compaction summary: a spec in `черновик` means
+  ask again, even if the summary says it was approved.
 
 ## 2. Task
 
@@ -42,6 +51,9 @@ the current state (listed in the spec's «Затронутые документ�
 - Update the task mark in the spec header. All tasks closed — spec status `сделана ГГГГ-ММ-ДД`.
   After that the spec file is never edited.
 - Commit after every finished task.
+- **Stop 2 — commit.** Before every commit show `git diff --stat`, the commit message and the result of
+  the full verification command, and ask whether to commit. Work without a spec (see section 1) has
+  this stop only.
 
 ## 5. Branch and merge request
 
