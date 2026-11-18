@@ -104,6 +104,7 @@ def test_rules_stop_without_kit(kit, project):
     agents = " ".join(read(project, "AGENTS.md").split())
     assert "`change-workflow` is not among your skills" in agents
     assert "`source=`" in agents
+    assert "never from memory tools" in agents
 
 
 def test_rerun_changes_nothing(kit, project):
