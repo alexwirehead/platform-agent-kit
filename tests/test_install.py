@@ -84,6 +84,29 @@ def test_core_install(kit, project):
     assert "profiles=" in read(project, ".agent-kit.lock")
 
 
+def test_lock_source(kit, project, tmp_path_factory):
+    """Адрес кита в lock — origin клона без учётных данных; без git — unknown (К19)."""
+    install(kit, project)
+    assert "source=unknown" in read(project, ".agent-kit.lock")
+
+    cloned = tmp_path_factory.mktemp("cloned") / "kit"
+    shutil.copytree(kit, cloned)
+    git(cloned, "init", "-q")
+    git(cloned, "remote", "add", "origin", "https://user:secret@example.com/kit.git")
+    install(cloned, project)
+    lock = read(project, ".agent-kit.lock")
+    assert "source=https://example.com/kit.git" in lock
+    assert "secret" not in lock
+
+
+def test_rules_stop_without_kit(kit, project):
+    install(kit, project)
+    agents = " ".join(read(project, "AGENTS.md").split())
+    assert "`change-workflow` is not among your skills" in agents
+    assert "`source=`" in agents
+    assert "never from memory tools" in agents
+
+
 def test_rerun_changes_nothing(kit, project):
     install(kit, project, "test-b")
     git(project, "add", "-A")

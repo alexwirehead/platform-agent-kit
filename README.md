@@ -80,7 +80,7 @@
 | навыки | `.agents/skills/`, для Claude Code — симлинки в `.claude/skills/` |
 | команды `simplify`, `code-review`, `security-review` для OpenCode | `.opencode/commands/` |
 | шаблоны процесса и профилей | `TASKS.md`, `docs/specs/README.md` и другие — только если файла нет |
-| версия кита, профили, навыки | `.agent-kit.lock` |
+| адрес и версия кита, профили, навыки | `.agent-kit.lock` |
 
 ## Обновление и смена профилей
 
