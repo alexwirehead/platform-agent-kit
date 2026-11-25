@@ -231,6 +231,18 @@ def test_every_real_profile(kit, project, profile):
     assert profile in read(project, ".agent-kit.lock")
 
 
+def test_python_base_profile(kit, project):
+    """Профиль python — база: его требуют python-exporter, fastapi и temporal, навык стиля в нём одном (К22)."""
+    for profile in ("python-exporter", "fastapi", "temporal"):
+        assert (ROOT / "profiles" / profile / "requires").read_text().split() == ["python"], profile
+    owners = [p.parent.name for p in (ROOT / "profiles").glob("*/skills.txt") if "/python-code-style" in p.read_text()]
+    assert owners == ["python"]
+    install(kit, project, "fastapi", "temporal")
+    lock = read(project, ".agent-kit.lock")
+    assert "profiles=python fastapi temporal" in lock
+    assert read(project, "AGENTS.md").count("## Python\n") == 1
+
+
 def test_kit_agents_block_up_to_date(kit, project):
     """Блок AGENTS.md кита совпадает с тем, что собрал бы установщик (К12)."""
     text = (ROOT / "AGENTS.md").read_text()

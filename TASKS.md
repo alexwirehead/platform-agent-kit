@@ -142,6 +142,13 @@
   validate-overlays, conventions) ловятся. Утилиты в девконтейнере — блок `RUN` прогнан под `sh` для arm64,
   образ не собирался. Установка с сетью: 11 навыков, без `fluxcd-debug` его навык уходит.
   `uv run pytest`: 30 passed, 5 skipped; с утилитами Flux и CI — 33 passed, 2 skipped; ruff чистый.
+- [~] T4.9 Профили `python`, `fastapi`, `temporal`, `backstage`; `python-exporter` требует `python`; строки
+  `INSTALL.md`, README; тест.
+  Спека: docs/specs/012-python-stack.md
+  Заметки: 2026-11-25, стек сверен с `uv.lock` пользователя (в кит не попал). SKILL.md всех навыков прочитаны
+  целиком; Temporal — справочники Python и поиск команд против кластера. С сетью: `fastapi temporal backstage` —
+  14 навыков за 205 с, без `backstage` его навыки уходят; снятие `temporal` нашло T2.6. `uv run pytest`: 46 passed,
+  1 skipped; ruff чистый. Осталась проверка пользователя в проекте. Ветка: feature/012-python-stack
 - [ ] T4.3 `argocd`: Application, ApplicationSet, проекты.
 - [ ] T4.4 `otel`: экспортеры и коллектор OpenTelemetry.
 - [ ] T4.5 `monitoring`: правила алертов, ServiceMonitor, VictoriaMetrics.

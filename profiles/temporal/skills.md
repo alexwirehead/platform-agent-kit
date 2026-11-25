@@ -1,0 +1,1 @@
+| writing or changing Temporal workflows, activities, workers or their tests; non-determinism errors, stuck workflows | `temporal-developer` (Python references); profile rules for layout, CLI and versioning |

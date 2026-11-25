@@ -1,0 +1,3 @@
+# Third-party skills: one GitHub tree URL pinned to a commit per line. Bump a commit only after reading the skill diff (decision К3).
+https://github.com/backstage/backstage/tree/1be002d4861eb50b18f75de0094ea24d7ce4701e/.agents/skills/frontend-plugin-development
+https://github.com/backstage/backstage/tree/1be002d4861eb50b18f75de0094ea24d7ce4701e/.agents/skills/backend-plugin-development

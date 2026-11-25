@@ -1,0 +1,4 @@
+- fastapi: no FastAPI feature newer than the version in `uv.lock`
+- fastapi: no Temporal worker in the API process; the Temporal client is a dependency replaced in tests
+- fastapi: a new library or a database layer is agreed with the user
+- fastapi: an OpenAPI change that breaks clients is agreed; the Backstage client regeneration is mentioned

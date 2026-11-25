@@ -1,0 +1,2 @@
+# Third-party skills: one GitHub tree URL pinned to a commit per line. Bump a commit only after reading the skill diff (decision К3).
+https://github.com/fastapi/fastapi/tree/05e6df7e906c3decba377c37548019973f40bf15/fastapi/.agents/skills/fastapi

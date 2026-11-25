@@ -33,7 +33,11 @@ Look through the project with your own tools. Each profile and its signals:
 | `yandex-cloud` | provider `yandex-cloud/yandex`, SDK `yandexcloud`, `*.yandexcloud.net` addresses |
 | `cloudru` | provider `sbercloud-terraform/sbercloud` |
 | `helm` | `Chart.yaml` |
+| `python` | `pyproject.toml` or `uv.lock`; added automatically by `python-exporter`, `fastapi` and `temporal` |
 | `python-exporter` | a Python project depending on `prometheus-client` |
+| `fastapi` | dependency `fastapi` |
+| `temporal` | dependency `temporalio` |
+| `backstage` | `backstage.json`, packages `@backstage/*` in `package.json` |
 | `external-api` | code calls an external API the agent has no access to; added automatically by `yandex-cloud` and `cloudru` |
 | `grafana` | Grafana dashboard JSON files in the repository |
 | `fluxcd` | `FluxInstance`, `ResourceSet`, `kustomize.toolkit.fluxcd.io` resources, `clusters/*/flux-system/` |
@@ -43,7 +47,7 @@ Look through the project with your own tools. Each profile and its signals:
 `install.sh --help` in the kit lists every profile with a one-line description.
 
 Ask the user when:
-- a signal is weak (`external-api`; Python without an exporter);
+- a signal is weak (`external-api`);
 - signals contradict each other;
 - a Terraform project shows no cloud;
 - the user named a profile whose signals are absent.

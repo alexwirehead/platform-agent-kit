@@ -1,0 +1,3 @@
+- backstage: no infrastructure logic in plugins; it goes through the API
+- backstage: the API client is generated from OpenAPI, generated files are not edited
+- backstage: the plugin follows the frontend system the app uses

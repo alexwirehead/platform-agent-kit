@@ -1,0 +1,4 @@
+- temporal: workflow code has no direct time, randomness, UUIDs, sleep or I/O
+- temporal: activities calling external systems use an idempotency key
+- temporal: a workflow code change that affects running executions is versioned and has a replay test
+- temporal: no Temporal CLI command against a real cluster

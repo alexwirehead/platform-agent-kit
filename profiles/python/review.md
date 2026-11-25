@@ -1,0 +1,2 @@
+- python: no blocking calls (`time.sleep`, sync HTTP or file I/O) inside `async def`
+- python: tests do not reach the network or real systems

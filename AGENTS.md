@@ -7,7 +7,7 @@
 
 Кит работает по своему ядру (К12): блок ниже ставит `./install.sh .`, профили в кит не ставятся.
 
-- Decision log: `docs/00-overview.md`, раздел 4 (К1–К21).
+- Decision log: `docs/00-overview.md`, раздел 4 (К1–К22).
 - Full verification command: `uv run pytest && uv run ruff check && uv run ruff format --check` —
   тесты установщика, shellcheck (К10) и ruff.
 

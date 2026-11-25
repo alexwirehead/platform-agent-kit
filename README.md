@@ -1,12 +1,12 @@
 # platform-agent-kit
 
 Набор правил и навыков агентов (Claude Code и OpenCode) для работы платформенного инженера: Terraform и
-Terragrunt (Yandex Cloud, Cloud.ru), Helm-чарты, GitLab CI, GitOps на Flux, экспортеры на Python, внешние
-API, дашборды Grafana. В кит входит только то, что уже обкатано в работе или согласовано по интервью.
+Terragrunt (Yandex Cloud, Cloud.ru), Helm-чарты, GitLab CI, GitOps на Flux, Python (FastAPI, Temporal,
+экспортеры), плагины Backstage, внешние API, дашборды Grafana. В кит входит только то, что уже обкатано в работе или согласовано по интервью.
 
 Агенту: чтобы поставить или обновить кит в проекте или во всех проектах папки, следуй `INSTALL.md`.
 
-Статус: ядро, установщик и десять профилей. Каждое изменение кита описано спецификацией в
+Статус: ядро, установщик и четырнадцать профилей. Каждое изменение кита описано спецификацией в
 `docs/specs/`, план — в `TASKS.md`: дальше профили-заготовки по интервью и перевод существующих проектов
 на кит.
 
@@ -27,7 +27,11 @@ API, дашборды Grafana. В кит входит только то, что 
 |---|---|---|
 | ядро | общие правила, подход к доработкам, ревью | `change-workflow`; сторонние: `test-driven-development`, `verification-before-completion`, `systematic-debugging`, `source-driven-development`, `ru-text`, `no-ai-slop` |
 | `helm` | Helm-чарты по правилам команды, скрипт проверки `dev/check-chart.sh` | `helm-conventions`; сторонний `helm-chart-scaffolding` |
-| `python-exporter` | Prometheus-экспортер на Python, который опрашивает внешний API | `python-exporter`; сторонние `python-code-style`, `docker-patterns` |
+| `python` | общие правила Python: uv, Ruff, ty, pytest; база для `python-exporter`, `fastapi`, `temporal` | сторонние `python-code-style`, `python-testing-patterns`, `async-python-patterns` |
+| `python-exporter` | Prometheus-экспортер на Python, который опрашивает внешний API; требует `python` | `python-exporter`; сторонний `docker-patterns` |
+| `fastapi` | API на FastAPI: клиент Temporal, контракт OpenAPI с Backstage, деплой в k8s; требует `python` | сторонний официальный `fastapi` |
+| `temporal` | workflow и activity Temporal на Python SDK, свой кластер; требует `python` | сторонний официальный `temporal-developer` |
+| `backstage` | frontend- и backend-плагины Backstage, работа через API проекта | сторонние `frontend-plugin-development`, `backend-plugin-development` |
 | `external-api` | работа с внешним API без доступа к самой системе, шаблон `docs/api-facts.md` | `api-fact-check` |
 | `yandex-cloud` | API Yandex Cloud; требует `external-api` | `yc-fact-check` |
 | `grafana` | любой дашборд Grafana JSON-ом в репозитории | `grafana-dashboard` |

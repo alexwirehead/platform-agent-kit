@@ -4,7 +4,8 @@ Prometheus-экспортер на Python, который опрашивает �
 
 - Навык `python-exporter`: фоновый цикл и снимок, ошибки с последним известным состоянием, метрики
   через custom collector, logfmt, тесты на фикстурах и fake-клиентах, локальный стенд, образ.
-- Сторонние навыки: `python-code-style` (PEP 8, docstring, типы), `docker-patterns` (Dockerfile, Compose).
+- Сторонний навык `docker-patterns` (Dockerfile, Compose). Общие правила Python — профиль `python`, ставится
+  сам.
 - Пункты ревью: перенос состояния при ошибке, кардинальность лейблов, секреты в логах.
 
 Обычно ставится вместе с `external-api` (факты о системе) и `helm` (деплой).

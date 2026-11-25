@@ -1,0 +1,2 @@
+# Third-party skills: one GitHub tree URL pinned to a commit per line. Bump a commit only after reading the skill diff (decision К3).
+https://github.com/temporalio/skill-temporal-developer/tree/db4cbca5e5d278b99631d522ad7f93c14f20ec8f temporal-developer
