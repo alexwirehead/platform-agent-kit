@@ -119,16 +119,29 @@ for name in ${PROFILES[@]+"${PROFILES[@]}"}; do
   SOURCES+=("$KIT/profiles/$name")
 done
 
-# Свои навыки (каталоги) и сторонние (URL); имя навыка — последний элемент пути.
+# skill_name <каталог или URL> — имя навыка: последний элемент пути; навык в корне репозитория
+# (URL кончается на tree/<коммит>) называется по репозиторию.
+skill_name() {
+  case "$1" in
+    */tree/*/*) basename "$1" ;;
+    */tree/*) basename "${1%/tree/*}" ;;
+    *) basename "$1" ;;
+  esac
+}
+
+# Свои навыки (каталоги) и сторонние (URL); имя навыка — последний элемент пути. Строка skills.txt
+# может задать имя вторым полем, если name в SKILL.md не совпадает с ним.
 OWN=()
 THIRD=()
+THIRD_NAMES=()
 for src in "${SOURCES[@]}"; do
   for d in "$src"/skills/*/; do
     [ -d "$d" ] && OWN+=("${d%/}")
   done
-  for url in $(lines "$src/skills.txt"); do
+  while read -r url name; do
     THIRD+=("$url")
-  done
+    THIRD_NAMES+=("${name:-$(skill_name "$url")}")
+  done < <(lines "$src/skills.txt")
 done
 # Свой навык проекта с тем же именем побеждает: копия кита не ставится.
 KEEP=()
@@ -141,19 +154,11 @@ for d in ${OWN[@]+"${OWN[@]}"}; do
   fi
 done
 OWN=(${KEEP[@]+"${KEEP[@]}"})
-# skill_name <каталог или URL> — имя навыка: последний элемент пути; навык в корне репозитория
-# (URL кончается на tree/<коммит>) называется по репозиторию.
-skill_name() {
-  case "$1" in
-    */tree/*/*) basename "$1" ;;
-    */tree/*) basename "${1%/tree/*}" ;;
-    *) basename "$1" ;;
-  esac
-}
 SKILLS=()
-for d in ${OWN[@]+"${OWN[@]}"} ${THIRD[@]+"${THIRD[@]}"}; do
+for d in ${OWN[@]+"${OWN[@]}"}; do
   SKILLS+=("$(skill_name "$d")")
 done
+SKILLS+=(${THIRD_NAMES[@]+"${THIRD_NAMES[@]}"})
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -236,9 +241,9 @@ for d in ${OWN[@]+"${OWN[@]}"}; do
   ln -sfn "../../.agents/skills/$name" "$TARGET/.claude/skills/$name"
 done
 if [ "$OFFLINE" -eq 0 ]; then
-  for url in ${THIRD[@]+"${THIRD[@]}"}; do
-    echo "== $(skill_name "$url")"
-    (cd "$TARGET" && npx -y "$SKILLS_CLI" add "$url" -a claude-code -a opencode -y)
+  for i in ${THIRD[@]+"${!THIRD[@]}"}; do
+    echo "== ${THIRD_NAMES[$i]}"
+    (cd "$TARGET" && npx -y "$SKILLS_CLI" add "${THIRD[$i]}" -a claude-code -a opencode -y)
   done
 fi
 

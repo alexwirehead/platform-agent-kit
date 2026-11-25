@@ -22,7 +22,8 @@
 core/
   rules.md          фрагмент AGENTS.md: общие правила (EN)
   skills.md         строки таблицы «ситуация → навык» (EN)
-  skills.txt        сторонние навыки: URL с коммитом, по одному в строке
+  skills.txt        сторонние навыки: URL с коммитом, по одному в строке; вторым полем — имя,
+                    если name в SKILL.md не совпадает с концом URL
   skills/           свои навыки ядра, например change-workflow
   commands/         команды OpenCode: simplify, code-review, security-review
   templates/        docs/specs/README.md, TASKS.md — кладутся, только если их нет

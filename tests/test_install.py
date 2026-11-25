@@ -214,10 +214,14 @@ def test_third_party_skill_names(kit, project):
     sha = "0" * 40
     (prof / "skills.txt").write_text(
         f"https://github.com/owner/repo/tree/{sha}/skills/sub-skill\nhttps://github.com/owner/root-skill/tree/{sha}\n"
+        f"https://github.com/owner/skill-renamed/tree/{sha} renamed\n"
     )
     install(kit, project, "test-third")
     skills = [line for line in read(project, ".agent-kit.lock").splitlines() if line.startswith("skills=")][0]
-    assert {"sub-skill", "root-skill"} <= set(skills.removeprefix("skills=").split())
+    names = set(skills.removeprefix("skills=").split())
+    # Явное имя вторым полем — когда name в SKILL.md не совпадает с именем репозитория.
+    assert {"sub-skill", "root-skill", "renamed"} <= names
+    assert "skill-renamed" not in names
     assert sha not in skills
 
 
