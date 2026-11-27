@@ -8,7 +8,8 @@
 2. Read this file and `TASKS.md`.
 3. Take the first task marked `[~]`; if none, the first `[ ]` in order. A new request that changes
    behaviour has no task yet: start it with `change-workflow`.
-4. Read only the documents the task links to and its spec (the `Спека:` line).
+4. Read only the documents the task links to, its spec (the `Спека:` line) and its plan
+   (`docs/specs/NNN-slug.plan.md`).
 5. Do the task, check it against the spec's «Готово, когда», update `TASKS.md`.
 
 ## Rules that must not be broken
@@ -31,10 +32,10 @@
    `AskUserQuestion`, OpenCode: `question`). Give options with honest pros and cons, the recommended
    one first.
 7. **Spec first, then task, then code.** Any behaviour change follows `change-workflow` in a fixed
-   order: spec → task → failing test → code → docs → merge request. Stop for the user twice: after the
-   spec draft (status `принята` only after the user's explicit yes) and before every commit. Without a
-   spec you may only fix code to match already described behaviour, refactor without behaviour
-   change, fix typos and docs.
+   order: spec → task → plan → failing test → code → docs → merge request. Stop for the user twice:
+   after the spec draft (status `принята` only after the user's explicit yes) and before every
+   commit. Without a spec you may only fix code to match already described behaviour, refactor
+   without behaviour change, fix typos and docs.
 
 ## Skills
 

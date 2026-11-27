@@ -5,7 +5,7 @@ description: How a change is made in a project — spec in docs/specs/NNN-slug.m
 
 # Change workflow
 
-Order is fixed: **spec → task → failing test → code → docs → merge request**. Never skip ahead.
+Order is fixed: **spec → task → plan → failing test → code → docs → merge request**. Never skip ahead.
 
 Stop for the user twice: after the spec draft and before every commit. Each stop is a question with
 the question tool (Claude Code: `AskUserQuestion`, OpenCode: `question`) that ends your turn; do not
@@ -37,13 +37,25 @@ After the spec is accepted, add one or more tasks to `TASKS.md` in the matching 
 - Statuses: `[ ]` not started, `[~]` in progress, `[x]` done, `[!]` blocked (reason in notes).
 - Work discovered on the way that is not in the list becomes a new task, not silent extra work.
 
-## 3. Test, then code
+## 3. Plan
+
+Before the first test, write `docs/specs/NNN-slug.plan.md` from the template in `docs/specs/README.md`:
+one plan per spec, a section per task with the files to touch, the numbered steps and the tests that
+fail first. There is no separate stop: the user sees the plan in the diff at Stop 2.
+
+- Mark a step `[x]` when it is done. When the work departs from the plan, update the plan in the same
+  commit as the code.
+- After context compaction the plan file wins over the compaction summary: continue from its first
+  open step.
+- The plan is history like the spec: once the spec is `сделана`, the plan is never edited.
+
+## 4. Test, then code
 
 Start the task: mark it `[~]`. Write a failing test first (`test-driven-development`), then the
 minimal code to make it pass. The task includes moving the change into the documents that describe
 the current state (listed in the spec's «Затронутые документы»). The spec itself stays as history.
 
-## 4. Finish
+## 5. Finish
 
 - Check every «Готово, когда» criterion with a fresh run of the commands
   (`verification-before-completion`). Only then mark `[x]` with the date and the run result in
@@ -53,9 +65,9 @@ the current state (listed in the spec's «Затронутые документ�
 - Commit after every finished task.
 - **Stop 2 — commit.** Before every commit show `git diff --stat`, the commit message and the result of
   the full verification command, and ask whether to commit. Work without a spec (see section 1) has
-  this stop only.
+  this stop only and no plan.
 
-## 5. Branch and merge request
+## 6. Branch and merge request
 
 - No direct commits to `main`. Branch from a fresh `main`: `<type>/<KEY>-<slug>`, for example
   `feature/PROJ-123-node-group-presets`; `<type>` is `feature`, `fix` or `docs`. One branch — one

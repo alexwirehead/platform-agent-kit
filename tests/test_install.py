@@ -432,6 +432,18 @@ def test_rules_keep_workflow_after_compaction():
     assert "compaction" in rules
 
 
+def test_core_task_plan():
+    """План задачи — файл рядом со спекой, переживает сжатие контекста (К23)."""
+    skill = " ".join((ROOT / "core" / "skills" / "change-workflow" / "SKILL.md").read_text().split())
+    rules = " ".join((ROOT / "core" / "rules.md").read_text().split())
+    assert "spec → task → plan → failing test" in skill
+    assert "docs/specs/NNN-slug.plan.md" in skill
+    assert "update the plan in the same commit" in skill
+    assert "its plan" in rules
+    for readme in (ROOT / "core" / "templates" / "docs" / "specs" / "README.md", ROOT / "docs" / "specs" / "README.md"):
+        assert "# План: NNN." in readme.read_text()
+
+
 FLUX_TOOLS = ("kustomize", "kubeconform", "yq", "flux", "flux-operator")
 
 

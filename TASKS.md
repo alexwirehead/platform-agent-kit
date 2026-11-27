@@ -49,6 +49,14 @@
   Спека: docs/specs/011-human-gates.md
   Заметки: 2026-11-18, спека одобрена пользователем по новой остановке 1. `uv run pytest`: 41 passed,
   1 skipped; ruff чистый. Осталась проверка на GLM. Ветка: feature/011-human-gates (от feature/010-mr-and-jira)
+- [~] T1.8 План задачи в файле `docs/specs/NNN-slug.plan.md`: этап «план» в `change-workflow` и правиле 7,
+  шаблон плана, чтение плана в начале сессии; тест.
+  Спека: docs/specs/013-plan-and-mistakes.md
+  Заметки: 2026-11-27, план этой спеки — первый по новому шаблону. `uv run pytest`: 47 passed, 1 skipped;
+  ruff чистый. Осталась проверка пользователя в проекте. Ветка: feature/013-plan-and-mistakes (от feature/012-python-stack)
+- [ ] T1.9 Известные ошибки агента: правило ядра (предложить строку после повторной поправки, писать
+  после «да»), подраздел `Known mistakes` в новом `AGENTS.md`; тест.
+  Спека: docs/specs/013-plan-and-mistakes.md
 
 ## Этап 2. Установщик
 
