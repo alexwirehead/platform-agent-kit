@@ -444,6 +444,15 @@ def test_core_task_plan():
         assert "# План: NNN." in readme.read_text()
 
 
+def test_core_known_mistakes(kit, project):
+    """Повторную ошибку агент предлагает записать в раздел проекта, пишет после «да» (К23)."""
+    rules = " ".join((ROOT / "core" / "rules.md").read_text().split())
+    assert "Known mistakes" in rules
+    assert "only after the user's yes" in rules
+    install(kit, project)
+    assert "### Known mistakes" in read(project, "AGENTS.md")
+
+
 FLUX_TOOLS = ("kustomize", "kubeconform", "yq", "flux", "flux-operator")
 
 

@@ -36,6 +36,9 @@
    after the spec draft (status `принята` only after the user's explicit yes) and before every
    commit. Without a spec you may only fix code to match already described behaviour, refactor
    without behaviour change, fix typos and docs.
+8. **A mistake corrected twice goes into the rules.** When the user corrects the same mistake a second
+   time, propose one line for the `Known mistakes` list in the project section of this file: what goes
+   wrong and how to do it right. Write it only after the user's yes.
 
 ## Skills
 

@@ -207,6 +207,10 @@ if [ "$MODE" = new ]; then
       lines "$src/project.md"
     done
     echo
+    echo "### Known mistakes"
+    echo
+    echo "One line per mistake the user corrected twice: what goes wrong and how to do it right."
+    echo
     cat "$TMP/block"
   } > "$AGENTS"
 elif [ "$MODE" = replace ]; then

@@ -20,7 +20,7 @@
 Файлы: `tests/test_install.py`, `core/rules.md`, `install.sh`, `AGENTS.md` (блок), `README.md`, `TASKS.md`
 (этап 6).
 
-1. [ ] Тест `test_core_known_mistakes` падает: правило в `core/rules.md` с «only after the user's yes»,
+1. [x] Тест `test_core_known_mistakes` падает: правило в `core/rules.md` с «only after the user's yes»,
    новый `AGENTS.md` содержит `### Known mistakes`.
-2. [ ] Правило 8 в `core/rules.md`, подраздел в `install.sh` (режим `new`).
-3. [ ] `./install.sh .`, README, идеи плейбука в этапе 6; полная проверка.
+2. [x] Правило 8 в `core/rules.md`, подраздел в `install.sh` (режим `new`).
+3. [x] `./install.sh .`, README, идеи плейбука в этапе 6; полная проверка.
